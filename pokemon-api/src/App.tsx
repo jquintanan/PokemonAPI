@@ -7,6 +7,10 @@ import { useState, useEffect } from "react";
 function App() {
   const [pokemonList, setPokemonList] = useState<any[]>([]);
   const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
+  const [filteredPokemonData, setFilteredPokemonData] = useState<PokemonData[]>(
+    []
+  );
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchPokemonList().then((response) => {
@@ -22,13 +26,32 @@ function App() {
       })
     ).then((responses) => {
       setPokemonData(responses);
+      setFilteredPokemonData(responses);
     });
   }, [pokemonList]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value);
+  };
+
+  useEffect(() => {
+    const results = pokemonData.filter((pokemon) =>
+      pokemon.name.toLowerCase().includes(search)
+    );
+    setFilteredPokemonData(results);
+  }, [search]);
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Pokemon API Test</h1>
+        <div id="search_bar">
+          <input
+            type="text"
+            placeholder="Search by name"
+            onChange={handleInputChange}
+          />
+        </div>
         <div>
           <table>
             <thead>
@@ -36,19 +59,26 @@ function App() {
                 <td>Pokedex</td>
                 <td>Name</td>
                 <td>Height and Weight</td>
+                <td>Types</td>
                 <td>Regular</td>
                 <td>Shiny</td>
               </tr>
             </thead>
             <tbody>
-              {pokemonData.map((pokemon) => {
+              {filteredPokemonData.map((pokemon) => {
                 return (
                   <tr id={`${pokemon.id}`}>
                     <td>{pokemon.id}</td>
                     <td>{pokemon.name}</td>
                     <td>
-                      <p>H: {pokemon.height}</p>
-                      <p>W: {pokemon.weight}</p>
+                      H: {pokemon.height}
+                      <br />
+                      W: {pokemon.weight}
+                    </td>
+                    <td>
+                      {pokemon.types.map((type) => {
+                        return <div>{type.type.name}</div>;
+                      })}
                     </td>
                     <td>
                       <img

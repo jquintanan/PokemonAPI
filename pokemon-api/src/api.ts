@@ -12,6 +12,11 @@ export interface PokemonData {
     front_shiny: string;
     back_shiny: string;
   };
+  types: {
+    type: {
+      name: string;
+    };
+  }[];
 }
 
 export function fetchPokemonList(): Promise<any> {
