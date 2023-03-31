@@ -3,9 +3,14 @@ const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=151";
 export interface PokemonData {
   id: number;
   name: string;
+  base_experience: number;
+  height: number;
   weight: number;
   sprites: {
     front_default: string;
+    back_default: string;
+    front_shiny: string;
+    back_shiny: string;
   };
 }
 

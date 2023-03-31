@@ -29,36 +29,50 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Pokemon API Test</h1>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
         <div>
           <table>
             <thead>
               <tr>
-                <td>ID</td>
+                <td>Pokedex</td>
                 <td>Name</td>
-                <td>Sprite</td>
+                <td>Height and Weight</td>
+                <td>Regular</td>
+                <td>Shiny</td>
               </tr>
             </thead>
             <tbody>
               {pokemonData.map((pokemon) => {
                 return (
-                  <tr id={pokemon.id.toString()}>
+                  <tr id={`${pokemon.id}`}>
                     <td>{pokemon.id}</td>
                     <td>{pokemon.name}</td>
                     <td>
+                      <p>H: {pokemon.height}</p>
+                      <p>W: {pokemon.weight}</p>
+                    </td>
+                    <td>
                       <img
                         src={pokemon.sprites.front_default}
+                        alt={pokemon.name}
+                        height={"200px"}
+                        width={"200px"}
+                      />
+                      <img
+                        src={pokemon.sprites.back_default}
+                        alt={pokemon.name}
+                        height={"200px"}
+                        width={"200px"}
+                      />
+                    </td>
+                    <td>
+                      <img
+                        src={pokemon.sprites.front_shiny}
+                        alt={pokemon.name}
+                        height={"200px"}
+                        width={"200px"}
+                      />
+                      <img
+                        src={pokemon.sprites.back_shiny}
                         alt={pokemon.name}
                         height={"200px"}
                         width={"200px"}
