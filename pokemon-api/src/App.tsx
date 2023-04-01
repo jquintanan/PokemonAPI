@@ -10,6 +10,7 @@ import {
   fetchPokemonData,
   fetchPokemonList,
 } from "./api";
+import { PokemonGameView } from "./components/PokemonGameView.react";
 
 function App() {
   const [pokemonList, setPokemonList] = useState<any[]>([]);
@@ -77,12 +78,7 @@ function App() {
           />
           <Route
             path="/game"
-            element={
-              <div>
-                <h1>Game</h1>
-                <p>Coming soon...</p>
-              </div>
-            }
+            element={<PokemonGameView pokemonData={pokemonData} />}
           />
           <Route
             path="/about"

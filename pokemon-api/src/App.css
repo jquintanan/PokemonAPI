@@ -171,7 +171,7 @@ h1 {
   color: #ffffff;
   display: inline-block;
   margin: 20px;
-  max-width: 400px;
+  width: 400px;
   padding: 10px;
   text-align: center;
 }
@@ -208,8 +208,56 @@ h1 {
 
 .section {
   margin-top: 20px;
+  justify-content: center;
 }
 
 .section h4 {
   margin-top: 0;
+}
+
+/* Pokemon Profile NAvigation */
+.previous_pokemon_button,
+.next_pokemon_button {
+  display: inline-block;
+  background-color: #ffcb05;
+  border: none;
+  color: #222;
+  text-align: center;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  padding: 10px 24px;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.previous_pokemon_button:hover,
+.next_pokemon_button:hover {
+  background-color: #222;
+  color: #ffcb05;
+}
+
+/* Pokemon Fighter*/
+.stat-container {
+  /* display: flex; */
+  align-items: left;
+  margin-bottom: 5px;
+  width: 200px;
+}
+
+.stat-name {
+  width: 130px;
+  flex-basis: 100px;
+  text-align: left;
+}
+
+.stat-value {
+  width: 30px;
+  flex-basis: 50px;
+  text-align: center;
+}
+
+.stat-bar {
+  height: 10px;
+  border-radius: 5px;
 }

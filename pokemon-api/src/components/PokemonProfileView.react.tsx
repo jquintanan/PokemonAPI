@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { PokemonData } from "../api";
 import { useState, useEffect } from "react";
@@ -33,5 +33,27 @@ export const PokemonProfileView: React.FC<PokemonProfileViewProps> = ({
     return <h1>Loading...</h1>;
   }
 
-  return <Pokemon pokemonData={pokemonData} />;
+  return (
+    <div>
+      <Pokemon pokemonData={pokemonData} />
+      <div>
+        {pokemonData.id < 2 ? null : (
+          <Link
+            className="previous_pokemon_button"
+            to={`/profile/${pokemonData.id - 1}`}
+          >
+            Previous
+          </Link>
+        )}
+        {pokemonData.id > 150 ? null : (
+          <Link
+            className="next_pokemon_button"
+            to={`/profile/${pokemonData.id + 1}`}
+          >
+            Next
+          </Link>
+        )}
+      </div>
+    </div>
+  );
 };
