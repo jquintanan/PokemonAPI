@@ -35,6 +35,28 @@ a:hover {
   padding: 10px 20px;
 }
 
+#app_title_name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+#pokeball_icon {
+  position: relative;
+  left: 0px;
+  height: 50px;
+  width: 50px;
+}
+
+h1 {
+  margin: 0;
+  padding-left: 10px;
+  font-size: 36px;
+  color: #fff;
+  text-shadow: 2px 2px #000; /* Add a text shadow to make the text more readable */
+}
+
 /* Navigation bar styles */
 
 #site_navigation_bar {
@@ -87,7 +109,7 @@ a:hover {
 
 #search_input {
   font-size: 16px;
-  border: none;
+  border-width: 0px;
   border-radius: 10px;
   padding: 10px;
   text-align: center;
@@ -120,19 +142,19 @@ a:hover {
 }
 
 #pokemon_list thead {
-  background-color: #1a1a1a;
+  /* background-color: #1a1a1a; */
   color: #f2f2f2;
 }
 
 #pokemon_list td,
 #pokemon_list th {
-  border: 1px solid #333;
+  /* border: 1px solid #333; */
   padding: 8px;
   text-align: center;
 }
 
 #pokemon_list td {
-  background-color: #444;
+  /* background-color: #444; */
   color: #f2f2f2;
 }
 

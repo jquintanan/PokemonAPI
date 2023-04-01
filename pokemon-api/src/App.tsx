@@ -47,6 +47,7 @@ function App() {
       <div className="App">
         <div className="App-header">
           <div id="app_title_name">
+            <img src="pokeball.png" alt="pokeball" id="pokeball_icon" />
             <h1>Pokemon API Test</h1>
           </div>
           <div id="navigation_bar">
@@ -56,11 +57,12 @@ function App() {
                   <Link to="/">Home</Link>
                 </li>
                 <li>
-                  <Link to="/game">Game</Link>
-                </li>
-                <li>
                   <Link to="/profile/1">Profile</Link>
                 </li>
+                <li>
+                  <Link to="/game">Game</Link>
+                </li>
+
                 <li>
                   <Link to="/about">About</Link>
                 </li>
@@ -73,8 +75,24 @@ function App() {
             path="/"
             element={<PokemonListView pokemonData={pokemonData} />}
           />
-          <Route path="/game" element={<h1>Game</h1>} />
-          <Route path="/about" element={<h1>About</h1>} />
+          <Route
+            path="/game"
+            element={
+              <div>
+                <h1>Game</h1>
+                <p>Coming soon...</p>
+              </div>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <div>
+                <h1>About</h1>
+                <p>Coming soon...</p>
+              </div>
+            }
+          />
           <Route
             path="/profile/:id"
             element={<PokemonProfileView data={pokemonData} />}
