@@ -1,5 +1,4 @@
 import React from "react";
-import { PokemonData } from "../api";
 
 interface PokemonTypeProps {
   name: string;
