@@ -23,6 +23,7 @@ export interface PokemonData {
     };
   }[];
   pokedexEntry: string;
+  //add whole new branch to store species related data
 }
 
 export function fetchPokemonList(): Promise<any> {

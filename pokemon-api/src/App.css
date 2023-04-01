@@ -161,3 +161,47 @@ h1 {
 #pokemon_list tr:hover td {
   background-color: #1a1a1a;
 }
+
+/* Pokemon Card */
+.Pokemon {
+  background-color: #333333;
+  border: 1px solid #555555;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  display: inline-block;
+  margin: 20px;
+  max-width: 400px;
+  padding: 10px;
+  text-align: center;
+}
+
+.Pokemon h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+}
+
+.Pokemon img {
+  height: 200px;
+  margin-bottom: 10px;
+  width: 200px;
+}
+
+.Pokemon p {
+  margin-bottom: 10px;
+}
+
+.Pokemon div {
+  margin-bottom: 10px;
+}
+
+.PokemonType {
+  display: inline-block;
+  font-size: 12px;
+  margin-right: 5px;
+  padding: 5px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 80px;
+}
