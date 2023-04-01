@@ -17,6 +17,12 @@ export interface PokemonData {
       name: string;
     };
   }[];
+  stats: {
+    base_stat: number;
+    stat: {
+      name: string;
+    };
+  }[];
   moves: {
     move: {
       name: string;

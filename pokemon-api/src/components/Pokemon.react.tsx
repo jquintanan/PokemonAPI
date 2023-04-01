@@ -26,10 +26,27 @@ export const Pokemon: React.FC<PokemonProps> = ({ pokemonData }) => {
       <img src={pokemonData.sprites.back_default} alt="pokemon" />
       <img src={pokemonData.sprites.front_shiny} alt="pokemon" />
       <img src={pokemonData.sprites.back_shiny} alt="pokemon" />
-      <h4>Moves</h4>
-      {pokemonData.moves.slice(0, 4).map((move) => {
-        return <div>{move.move.name}</div>;
-      })}
+      <div className="section">
+        <h4>Height and Weight</h4>
+        <div>Height: {pokemonData.height}</div>
+        <div>Weight: {pokemonData.weight}</div>
+      </div>
+      <div className="section">
+        <h4>Stats</h4>
+        {pokemonData.stats.map((stat) => {
+          return (
+            <div>
+              {stat.stat.name}: {stat.base_stat}
+            </div>
+          );
+        })}
+      </div>
+      <div className="section">
+        <h4>Moves</h4>
+        {pokemonData.moves.slice(0, 4).map((move) => {
+          return <div>{move.move.name}</div>;
+        })}
+      </div>
     </div>
   );
 };
