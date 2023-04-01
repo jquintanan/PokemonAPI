@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+#search_bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px;
+  width: 100%;
+}
+
+#search_input {
+  width: 50%;
+  height: 50px;
+  font-size: 30px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}

@@ -17,6 +17,12 @@ export interface PokemonData {
       name: string;
     };
   }[];
+  moves: {
+    move: {
+      name: string;
+    };
+  }[];
+  pokedexEntry: string;
 }
 
 export function fetchPokemonList(): Promise<any> {
@@ -36,6 +42,22 @@ export function fetchPokemonList(): Promise<any> {
 
 export function fetchPokemonData(id: number): Promise<PokemonData> {
   const fetch_data_uri = `https://pokeapi.co/api/v2/pokemon/${id}/`;
+  return fetch(fetch_data_uri)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("There was a problem with the network request:", error);
+      throw error;
+    });
+}
+
+export function fetchPokedexEntry(id: number): Promise<any> {
+  const fetch_data_uri = `https://pokeapi.co/api/v2/pokemon-species/${id}/`;
   return fetch(fetch_data_uri)
     .then((response) => {
       if (!response.ok) {
