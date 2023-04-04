@@ -6,12 +6,20 @@ interface PokemonFighterProps {
   pokemonData: PokemonData;
   maxStats: { [key: string]: number };
   minStats: { [key: string]: number };
+  setSelectedPokemon?: ((pokemon: PokemonData[]) => void) | null;
+  fighterMode: "selection" | "battle";
+  isShiny?: boolean;
 }
+
+type FighterMode = "selection" | "battle";
 
 export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   pokemonData,
   maxStats,
   minStats,
+  setSelectedPokemon,
+  fighterMode,
+  isShiny,
 }) => {
   // Calculate the percentage of the maximum stat value
   const getStatPercentage = (statName: string, baseStat: number): number => {
@@ -49,7 +57,9 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
     <div className="Pokemon">
       <h3>
         #{pokemonData.id} {pokemonData.name}
+        {isShiny ? " 💎" : ""}
       </h3>
+
       <div>
         {pokemonData.types.map((type) => {
           return (
@@ -59,7 +69,14 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           );
         })}
       </div>
-      <img src={pokemonData.sprites.front_default} alt="pokemon" />
+      <img
+        src={
+          isShiny
+            ? pokemonData.sprites.front_shiny
+            : pokemonData.sprites.front_default
+        }
+        alt="pokemon"
+      />
       <div className="section">
         <h4>Stats</h4>
         <table>
@@ -81,6 +98,19 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           </tbody>
         </table>
       </div>
+      {fighterMode == "selection" && (
+        <div className="section">
+          {setSelectedPokemon && (
+            <button onClick={() => setSelectedPokemon([pokemonData])}>
+              Select
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
+};
+
+PokemonFighter.defaultProps = {
+  isShiny: false,
 };

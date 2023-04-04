@@ -261,3 +261,48 @@ h1 {
   height: 10px;
   border-radius: 5px;
 }
+
+/*Game View*/
+
+button {
+  border: none;
+
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  outline: none;
+  margin-right: 10px;
+  border-radius: 1px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.GameViewTab {
+  background-color: #202020;
+  border: none;
+  color: white;
+  padding: 10px;
+  font-size: 18px;
+  cursor: pointer;
+  outline: none;
+  margin-right: 10px;
+  border-radius: 1px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.GameViewTab.active {
+  background-color: #424242;
+  border-bottom-color: transparent;
+}
+
+.GameViewTab:hover {
+  background-color: #424242;
+}
+
+.GameViewTab:first-child {
+  margin-left: 0;
+}
+
+#BattleScreenTab {
+  background-color: #ff5959;
+  color: white;
+}

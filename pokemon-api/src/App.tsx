@@ -58,9 +58,6 @@ function App() {
                   <Link to="/">Home</Link>
                 </li>
                 <li>
-                  <Link to="/profile/1">Profile</Link>
-                </li>
-                <li>
                   <Link to="/game">Game</Link>
                 </li>
 
@@ -74,18 +71,32 @@ function App() {
         <Routes>
           <Route
             path="/"
-            element={<PokemonListView pokemonData={pokemonData} />}
+            element={
+              pokemonData.length > 0 ? (
+                <PokemonListView pokemonData={pokemonData} />
+              ) : (
+                <h1>Loading...</h1>
+              )
+            }
           />
           <Route
             path="/game"
-            element={<PokemonGameView pokemonData={pokemonData} />}
+            element={
+              pokemonData.length > 0 ? (
+                <PokemonGameView pokemonData={pokemonData} />
+              ) : (
+                <h1>Loading...</h1>
+              )
+            }
           />
           <Route
             path="/about"
             element={
-              <div>
+              <div style={{ textAlign: "center" }}>
                 <h1>About</h1>
-                <p>Coming soon...</p>
+                <p>Joel Quintana</p>
+                <p>jquintanan@gmail.com</p>
+                <p>joelquintana.com</p>
               </div>
             }
           />
