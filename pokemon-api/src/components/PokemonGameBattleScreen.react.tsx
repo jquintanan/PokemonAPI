@@ -14,7 +14,9 @@ export const PokemonGameBattleScreen: React.FC<
 > = ({ pokemonData, minStats, maxStats, selectedPokemon }) => {
   console.log("Rendering PokemonGame-BattleScreen");
 
-  const [battleLog, setBattleLog] = useState<string[]>([]);
+  const [battleLog, setBattleLog] = useState<
+    { time: string; message: string }[]
+  >([]);
   const [opponentPokemon, setOpponentPokemon] = useState<{
     data: PokemonData;
     isShiny: boolean;
@@ -30,8 +32,15 @@ export const PokemonGameBattleScreen: React.FC<
     };
   }
 
+  function getMessageObject(message: string) {
+    return { time: new Date().toLocaleTimeString(), message: message };
+  }
+
   function initializeBattleLog() {
-    setBattleLog(["Battle Started!", "Select a move to attack the opponent"]);
+    setBattleLog([
+      getMessageObject("Battle Started!"),
+      getMessageObject("Select a move to attack the opponent"),
+    ]);
   }
 
   //Assign a random pokemon to the opponent using the getTandomPokemon function
@@ -231,7 +240,7 @@ export const PokemonGameBattleScreen: React.FC<
       const randomIndex = Math.floor(Math.random() * messages.length);
       const message = messages[randomIndex];
 
-      setBattleLog([...battleLog, message]);
+      setBattleLog([...battleLog, getMessageObject(message)]);
 
       return;
     }
@@ -240,14 +249,16 @@ export const PokemonGameBattleScreen: React.FC<
       setOpponentHP(0);
       setBattleLog([
         ...battleLog,
-        current_player_pokemon.name +
-          " attacked " +
-          current_opponent_pokemon.name +
-          " for " +
-          damage +
-          " damage!",
-        current_opponent_pokemon.name + " has fainted!",
-        "You won the battle!",
+        getMessageObject(
+          current_player_pokemon.name +
+            " attacked " +
+            current_opponent_pokemon.name +
+            " for " +
+            damage +
+            " damage!"
+        ),
+        getMessageObject(current_opponent_pokemon.name + " has fainted!"),
+        getMessageObject("You won the battle!"),
       ]);
       return;
     }
@@ -255,12 +266,14 @@ export const PokemonGameBattleScreen: React.FC<
     setOpponentHP(opponentHP - damage);
     setBattleLog([
       ...battleLog,
-      current_player_pokemon.name +
-        " attacked " +
-        current_opponent_pokemon.name +
-        " for " +
-        damage +
-        " damage!",
+      getMessageObject(
+        current_player_pokemon.name +
+          " attacked " +
+          current_opponent_pokemon.name +
+          " for " +
+          damage +
+          " damage!"
+      ),
     ]);
   }
 
@@ -295,9 +308,12 @@ export const PokemonGameBattleScreen: React.FC<
   const battle_log = (
     <div className="section">
       <h3>Battle log</h3>
-      {battleLog.map((log) => {
-        return <p>{log}</p>;
-      })}
+      {battleLog
+        .slice()
+        .reverse()
+        .map((log, index) => {
+          return <p>{log.time + " : " + log.message}</p>;
+        })}
     </div>
   );
 
