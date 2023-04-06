@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { PokemonData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
+import { PokemonHPBar } from "./PokemonHPBar.react";
+import { calculateTypeMultiplier } from "./PokemonType.react";
 
 interface PokemonGameBattleScreenProps {
   pokemonData: PokemonData[];
@@ -23,6 +25,8 @@ export const PokemonGameBattleScreen: React.FC<
   }>({ data: pokemonData[0], isShiny: false });
   const [playerHP, setPlayerHP] = useState<number>(0);
   const [opponentHP, setOpponentHP] = useState<number>(0);
+  const [killStreak, setKillStreak] = useState<number>(0);
+  const [shinyKillStreak, setShinyKillStreak] = useState<number>(0);
 
   //select a random pokemon for the opponent
   function getRandomPokemon(): { data: PokemonData; isShiny: boolean } {
@@ -37,34 +41,58 @@ export const PokemonGameBattleScreen: React.FC<
   }
 
   function initializeBattleLog() {
-    setBattleLog([
-      getMessageObject("Battle Started!"),
-      getMessageObject("Select a move to attack the opponent"),
-    ]);
+    setBattleLog([getMessageObject("Battle Started!")]);
   }
 
-  //Assign a random pokemon to the opponent using the getTandomPokemon function
   useEffect(() => {
+    //Assign a random pokemon to the opponent using the getTandomPokemon function
+    // eslint-disable-next-line
     setOpponentPokemon(getRandomPokemon());
+    //Initialize battle log
+    // eslint-disable-next-line
+    initializeBattleLog();
+    // eslint-disable-next-line
   }, []);
 
-  //Initialize battle log
+  const kill_streak_counter_component = (
+    <div>
+      <h3>Pokemon Defeated: {killStreak}</h3>
+      <h4>Shiny 💎: {shinyKillStreak}</h4>
+    </div>
+  );
+
+  const current_player_pokemon = selectedPokemon[0];
+  const current_opponent_pokemon = opponentPokemon.data;
+  // Initialize player and opponent HP based on selected and opponent pokemon stats
   useEffect(() => {
-    initializeBattleLog();
-  }, []);
+    setPlayerHP(current_player_pokemon.stats[0].base_stat);
+    setOpponentHP(current_opponent_pokemon.stats[0].base_stat);
+    // eslint-disable-next-line
+  }, [selectedPokemon, opponentPokemon]);
+
+  const battle_portrait_style: React.CSSProperties = {
+    width: "40%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
 
   var pokemon_selected_for_battle = (
-    <div>
-      <div style={{ display: "flex" }}>
-        <div
-          className="playerSide"
-          style={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <div className="playerSide" style={battle_portrait_style}>
           <h3>Your Pokemon</h3>
           {selectedPokemon.map((pokemon) => {
             //show the selected pokemon
@@ -77,18 +105,15 @@ export const PokemonGameBattleScreen: React.FC<
               />
             );
           })}
+          <div style={{ width: "100%", padding: "0px 20px" }}>
+            <PokemonHPBar
+              currentHP={playerHP}
+              maxHP={current_player_pokemon.stats[0].base_stat}
+            />
+          </div>
         </div>
-        <div
-          className="opponentSide"
-          style={{
-            width: "50%",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
+        <div className="opponentSide" style={battle_portrait_style}>
           <h3>Opponent Pokemon</h3>
-
           <PokemonFighter
             pokemonData={opponentPokemon.data}
             minStats={minStats}
@@ -96,94 +121,21 @@ export const PokemonGameBattleScreen: React.FC<
             fighterMode="battle"
             isShiny={opponentPokemon.isShiny}
           />
+          <div style={{ width: "100%", padding: "0px 20px" }}>
+            <PokemonHPBar
+              currentHP={opponentHP}
+              maxHP={current_opponent_pokemon.stats[0].base_stat}
+            />
+          </div>
           <button
             onClick={() => {
               initializeBattleLog();
               setOpponentPokemon(getRandomPokemon());
             }}
-            style={{ width: "50%" }}
+            style={{ width: "50%", margin: "10px" }}
           >
             Randomize Opponent
           </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const current_player_pokemon = selectedPokemon[0];
-  const current_opponent_pokemon = opponentPokemon.data;
-
-  // Initialize player and opponent HP based on selected and opponent pokemon stats
-  useEffect(() => {
-    setPlayerHP(current_player_pokemon.stats[0].base_stat);
-    setOpponentHP(current_opponent_pokemon.stats[0].base_stat);
-  }, [selectedPokemon, opponentPokemon]);
-
-  const current_hp = (
-    <div className="section" style={{ display: "flex", flexDirection: "row" }}>
-      <div style={{ width: "50%", textAlign: "center", padding: "0px 40px" }}>
-        <h3>HP</h3>
-        <h4>
-          {playerHP} /{" "}
-          {current_player_pokemon
-            ? current_player_pokemon.stats[0].base_stat
-            : 0}
-        </h4>
-        <div
-          style={{
-            width: "100%",
-            height: "20px",
-            backgroundColor: "gray",
-            borderRadius: "10px",
-            position: "relative",
-          }}
-        >
-          <div
-            style={{
-              width: `${Math.round(
-                (playerHP / current_player_pokemon.stats[0].base_stat) * 100
-              )}%`,
-              height: "100%",
-              backgroundColor: "green",
-              borderRadius: "10px",
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          ></div>
-        </div>
-      </div>
-
-      <div style={{ width: "50%", textAlign: "center", padding: "0px 40px" }}>
-        <h3>HP</h3>
-        <h4>
-          {opponentHP} /{" "}
-          {current_opponent_pokemon
-            ? current_opponent_pokemon.stats[0].base_stat
-            : 0}
-        </h4>
-        <div
-          style={{
-            width: "100%",
-            height: "20px",
-            backgroundColor: "gray",
-            borderRadius: "10px",
-            position: "relative",
-          }}
-        >
-          <div
-            style={{
-              width: `${Math.round(
-                (opponentHP / current_opponent_pokemon.stats[0].base_stat) * 100
-              )}%`,
-              height: "100%",
-              backgroundColor: "green",
-              borderRadius: "10px",
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          ></div>
         </div>
       </div>
     </div>
@@ -196,22 +148,15 @@ export const PokemonGameBattleScreen: React.FC<
     defender: PokemonData,
     type: AttackType
   ) {
-    const attackerStat =
-      type === "attack"
-        ? attacker.stats[1].base_stat
-        : attacker.stats[3].base_stat;
-    const defenderStat =
-      type === "attack"
-        ? attacker.stats[2].base_stat
-        : attacker.stats[4].base_stat;
-    const basePower = 40; // use a fixed base power if the move doesn't have one
+    const new_battle_log = [...battleLog];
 
-    const modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
-    const damage = Math.floor(
-      basePower * (attackerStat / defenderStat) * modifier
+    new_battle_log.push(
+      type === "attack"
+        ? getMessageObject(`${current_player_pokemon.name} used an attack!`)
+        : getMessageObject(
+            `${current_player_pokemon.name} used a special attack!`
+          )
     );
-
-    console.log(opponentHP);
 
     if (opponentHP < 1) {
       const messages = [
@@ -240,41 +185,70 @@ export const PokemonGameBattleScreen: React.FC<
       const randomIndex = Math.floor(Math.random() * messages.length);
       const message = messages[randomIndex];
 
-      setBattleLog([...battleLog, getMessageObject(message)]);
+      new_battle_log.push(getMessageObject(message));
+
+      setBattleLog(new_battle_log);
 
       return;
     }
+
+    const attackerStat =
+      type === "attack"
+        ? attacker.stats[1].base_stat
+        : attacker.stats[3].base_stat;
+    const defenderStat =
+      type === "attack"
+        ? attacker.stats[2].base_stat
+        : attacker.stats[4].base_stat;
+    const basePower = 40; // use a fixed base power if the move doesn't have one
+
+    const random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
+    const type_multiplier = calculateTypeMultiplier(attacker, defender); // calculate the type multiplier
+
+    const damage = Math.floor(
+      basePower *
+        (attackerStat / defenderStat) *
+        random_modifier *
+        type_multiplier
+    );
+
+    var damage_text =
+      current_player_pokemon.name +
+      " attacked " +
+      current_opponent_pokemon.name +
+      " for " +
+      damage +
+      " damage!";
+
+    if (type_multiplier > 1) {
+      damage_text += " It's super effective!!!";
+      //add an scared emoji to the text
+      damage_text += " 😱";
+    } else if (type_multiplier < 1) {
+      damage_text += " It's not very effective...";
+      //add an emoji to the text
+      damage_text += " 😐";
+    }
+
+    new_battle_log.push(getMessageObject(damage_text));
 
     if (opponentHP - damage < 1) {
       setOpponentHP(0);
-      setBattleLog([
-        ...battleLog,
-        getMessageObject(
-          current_player_pokemon.name +
-            " attacked " +
-            current_opponent_pokemon.name +
-            " for " +
-            damage +
-            " damage!"
-        ),
-        getMessageObject(current_opponent_pokemon.name + " has fainted!"),
-        getMessageObject("You won the battle!"),
-      ]);
-      return;
+
+      if (opponentPokemon.isShiny) {
+        setShinyKillStreak(shinyKillStreak + 1);
+      }
+      setKillStreak(killStreak + 1);
+      new_battle_log.push(
+        getMessageObject(current_opponent_pokemon.name + " has fainted!")
+      );
+      new_battle_log.push(getMessageObject("You won the battle!"));
+    } else {
+      setOpponentHP(opponentHP - damage);
     }
 
-    setOpponentHP(opponentHP - damage);
-    setBattleLog([
-      ...battleLog,
-      getMessageObject(
-        current_player_pokemon.name +
-          " attacked " +
-          current_opponent_pokemon.name +
-          " for " +
-          damage +
-          " damage!"
-      ),
-    ]);
+    setBattleLog(new_battle_log);
+    return;
   }
 
   const player_actions = (
@@ -322,8 +296,8 @@ export const PokemonGameBattleScreen: React.FC<
       style={{ display: "flex", flexDirection: "column", margin: "20px 0px" }}
     >
       <h2>Battle</h2>
+      {kill_streak_counter_component}
       {pokemon_selected_for_battle}
-      {current_hp}
       {player_actions}
       {battle_log}
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PokemonData } from "../api";
 import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
@@ -19,11 +19,6 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonData[]>([
     place_holder_pokemon,
   ]);
-
-  //select a random pokemon for the opponent
-  function getRandomPokemon() {
-    return pokemonData[Math.floor(Math.random() * 20)];
-  }
 
   //Calculate min and max stats
   function getStatsUpperAndLowerBounds(pokemonData: PokemonData[]): {
@@ -97,12 +92,15 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
   return (
     <div style={{ margin: "20px" }}>
       <h1>Pokemon Battle Game</h1>
-      <div style={{ margin: "10px 0px" }}>
+      <div
+        style={{ margin: "10px 0px", display: "flex", flexDirection: "row" }}
+      >
         <button
           onClick={() => setTab("selection_screen")}
           className={`GameViewTab ${
             tab === "selection_screen" ? "active" : ""
           }`}
+          style={{ width: "50%" }}
           id="SelectionScreenTab"
         >
           Pokemon Selection
@@ -111,7 +109,7 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
           onClick={() => setTab("battle_screen")}
           className={`GameViewTab ${tab === "battle_screen" ? "active" : ""}`}
           id="BattleScreenTab"
-          style={{ backgroundColor: "#FF5959" }}
+          style={{ backgroundColor: "#FF5959", width: "50%" }}
         >
           Battle!
         </button>

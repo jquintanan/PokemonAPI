@@ -7,7 +7,7 @@ interface PokemonFighterProps {
   maxStats: { [key: string]: number };
   minStats: { [key: string]: number };
   setSelectedPokemon?: ((pokemon: PokemonData[]) => void) | null;
-  fighterMode: "selection" | "battle";
+  fighterMode: FighterMode;
   isShiny?: boolean;
 }
 
@@ -54,7 +54,14 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   };
 
   return (
-    <div className="Pokemon">
+    <div
+      className="Pokemon"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <h3>
         #{pokemonData.id} {pokemonData.name}
         {isShiny ? " 💎" : ""}
@@ -77,13 +84,14 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         }
         alt="pokemon"
       />
+
       <div className="section">
         <h4>Stats</h4>
         <table>
           <tbody>
             {pokemonData.stats.map((stat) => {
               return (
-                <tr>
+                <tr style={{ width: "100%" }}>
                   <td className="stat-name">{stat.stat.name}</td>
                   <td className="stat-value">{stat.base_stat}</td>
                   <td className="stat-container">
@@ -98,7 +106,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           </tbody>
         </table>
       </div>
-      {fighterMode == "selection" && (
+      {fighterMode === "selection" && (
         <div className="section">
           {setSelectedPokemon && (
             <button onClick={() => setSelectedPokemon([pokemonData])}>

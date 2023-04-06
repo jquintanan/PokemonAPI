@@ -1,4 +1,5 @@
 import React from "react";
+import { PokemonData } from "../api";
 
 interface PokemonTypeProps {
   name: string;
@@ -114,6 +115,147 @@ const specific_style = (name: string) => {
       };
   }
 };
+
+const TYPE_CHART: { [key: string]: { [key: string]: number } } = {
+  normal: {
+    rock: 0.5,
+    ghost: 0,
+  },
+  fire: {
+    fire: 0.5,
+    water: 0.5,
+    grass: 2,
+    ice: 2,
+    bug: 2,
+    rock: 0.5,
+    dragon: 0.5,
+  },
+  water: {
+    fire: 2,
+    water: 0.5,
+    grass: 0.5,
+    ground: 2,
+    rock: 2,
+    dragon: 0.5,
+  },
+  electric: {
+    water: 2,
+    electric: 0.5,
+    grass: 0.5,
+    ground: 0,
+    flying: 2,
+    dragon: 0.5,
+  },
+  grass: {
+    fire: 0.5,
+    water: 2,
+    grass: 0.5,
+    poison: 0.5,
+    ground: 2,
+    flying: 0.5,
+    bug: 0.5,
+    rock: 2,
+    dragon: 0.5,
+  },
+  ice: {
+    fire: 0.5,
+    water: 0.5,
+    grass: 2,
+    ice: 0.5,
+    ground: 2,
+    flying: 2,
+    dragon: 2,
+  },
+  fighting: {
+    normal: 2,
+    ice: 2,
+    poison: 0.5,
+    flying: 0.5,
+    psychic: 0.5,
+    bug: 0.5,
+    rock: 2,
+    ghost: 0,
+  },
+  poison: {
+    grass: 2,
+    poison: 0.5,
+    ground: 0.5,
+    bug: 2,
+    rock: 0.5,
+    ghost: 0.5,
+  },
+  ground: {
+    fire: 2,
+    electric: 2,
+    grass: 0.5,
+    poison: 2,
+    flying: 0,
+    bug: 0.5,
+    rock: 2,
+  },
+  flying: {
+    electric: 0.5,
+    grass: 2,
+    fighting: 2,
+    bug: 2,
+    rock: 0.5,
+  },
+  psychic: {
+    fighting: 2,
+    poison: 2,
+    psychic: 0.5,
+  },
+  bug: {
+    fire: 0.5,
+    grass: 2,
+    fighting: 0.5,
+    poison: 2,
+    flying: 0.5,
+    psychic: 2,
+    ghost: 0.5,
+  },
+  rock: {
+    fire: 2,
+    ice: 2,
+    fighting: 0.5,
+    ground: 0.5,
+    flying: 2,
+    bug: 2,
+  },
+  ghost: {
+    normal: 0,
+    psychic: 2,
+    ghost: 2,
+  },
+  dragon: {
+    dragon: 2,
+  },
+};
+
+export function calculateTypeMultiplier(
+  attacker: PokemonData,
+  defender: PokemonData
+) {
+  let multiplier = 1;
+  const defenderTypes = defender.types.map((type) => type.type.name);
+
+  attacker.types.forEach((type) => {
+    const attackType = type.type.name;
+    const typeEffectiveness = TYPE_CHART[attackType];
+    defenderTypes.forEach((defenderType) => {
+      const effectiveness = typeEffectiveness[defenderType];
+      if (effectiveness === 0) {
+        multiplier *= 0;
+      } else if (effectiveness === 0.5) {
+        multiplier *= 0.5;
+      } else if (effectiveness === 2) {
+        multiplier *= 2;
+      }
+    });
+  });
+
+  return multiplier;
+}
 
 export const PokemonType: React.FC<PokemonTypeProps> = ({ name }) => {
   //combine styles with generated styles
