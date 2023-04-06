@@ -41,20 +41,41 @@ export const PokemonGameSelectionScreen: React.FC<
 
   var selection_index = (
     <div>
-      <div id="pokemon_menu" style={{ paddingTop: "20px" }}>
+      <div
+        id="pokemon_menu"
+        style={{
+          paddingTop: "20px",
+          width: "100%",
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
         {pokemonData.map((pokemon) => {
           return (
             <div
               className="border_for_selected"
               style={{
-                display: "inline-block",
+                //width: "100%",
+                // minWidth: "250px",
+                // maxWidth: "400px",
+                flexGrow: 1,
                 margin: selectedPokemon.includes(pokemon) ? "-5px" : "0px",
+                padding: "15px",
                 //show which pokemon is selected
                 border: selectedPokemon.includes(pokemon)
                   ? "5px solid red"
                   : "none",
               }}
             >
+              {/* <div
+                style={{
+                  width: "200px",
+                  height: "200px",
+                  backgroundColor: "white",
+                }}
+              >
+                Test
+              </div> */}
               <PokemonFighter
                 pokemonData={pokemon}
                 minStats={minStats}
@@ -70,7 +91,9 @@ export const PokemonGameSelectionScreen: React.FC<
   );
 
   return (
-    <div>
+    <div
+      style={{ display: "flex", flexDirection: "column", margin: "20px 0px" }}
+    >
       <h2>Select your pokemon:</h2>
       {current_selection}
       {selection_index}

@@ -3,11 +3,11 @@ import { PokemonType } from "./PokemonType.react";
 import { PokemonData } from "../api";
 import { Link } from "react-router-dom";
 
-interface PokemonListViewProps {
+interface PokemonPokeDexViewProps {
   pokemonData: PokemonData[];
 }
 
-export const PokemonListView: React.FC<PokemonListViewProps> = ({
+export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
   pokemonData,
 }) => {
   const [filteredPokemonData, setFilteredPokemonData] = useState<PokemonData[]>(

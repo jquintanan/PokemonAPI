@@ -70,8 +70,8 @@ export const PokemonGameBattleScreen: React.FC<
     // eslint-disable-next-line
   }, [selectedPokemon, opponentPokemon]);
 
-  const battle_portrait_style: React.CSSProperties = {
-    width: "40%",
+  const player_side_style: React.CSSProperties = {
+    width: "50%",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -85,37 +85,35 @@ export const PokemonGameBattleScreen: React.FC<
         justifyContent: "space-evenly",
       }}
     >
-      <div className="playerSide" style={battle_portrait_style}>
-        <h3>Your Pokemon</h3>
-        {selectedPokemon.map((pokemon) => {
-          //show the selected pokemon
-          return (
-            <PokemonFighter
-              pokemonData={selectedPokemon[0]}
-              minStats={minStats}
-              maxStats={maxStats}
-              fighterMode="battle"
-            />
-          );
-        })}
-        <div style={{ width: "100%", padding: "0px 20px" }}>
-          <PokemonHPBar
+      <div
+        className="playerSide"
+        style={{ ...player_side_style, marginRight: "5px" }}
+      >
+        <h3>You</h3>
+
+        <div className="section">
+          <PokemonFighter
+            pokemonData={selectedPokemon[0]}
+            minStats={minStats}
+            maxStats={maxStats}
+            fighterMode="battle"
             currentHP={playerHP}
             maxHP={current_player_pokemon.stats[0].base_stat}
           />
         </div>
       </div>
-      <div className="opponentSide" style={battle_portrait_style}>
-        <h3>Opponent Pokemon</h3>
-        <PokemonFighter
-          pokemonData={opponentPokemon.data}
-          minStats={minStats}
-          maxStats={maxStats}
-          fighterMode="battle"
-          isShiny={opponentPokemon.isShiny}
-        />
-        <div style={{ width: "100%", padding: "0px 20px" }}>
-          <PokemonHPBar
+      <div
+        className="opponentSide"
+        style={{ ...player_side_style, marginLeft: "5px" }}
+      >
+        <h3>Opponent</h3>
+        <div className="section">
+          <PokemonFighter
+            pokemonData={opponentPokemon.data}
+            minStats={minStats}
+            maxStats={maxStats}
+            fighterMode="battle"
+            isShiny={opponentPokemon.isShiny}
             currentHP={opponentHP}
             maxHP={current_opponent_pokemon.stats[0].base_stat}
           />
@@ -127,7 +125,7 @@ export const PokemonGameBattleScreen: React.FC<
           }}
           style={{ width: "50%", margin: "10px" }}
         >
-          Randomize Opponent
+          Next
         </button>
       </div>
     </div>
@@ -246,28 +244,38 @@ export const PokemonGameBattleScreen: React.FC<
   const player_actions = (
     <div className="section">
       <h3>Your Actions</h3>
-      <button
-        onClick={() =>
-          attackOpponent(
-            current_player_pokemon,
-            current_opponent_pokemon,
-            "attack"
-          )
-        }
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-evenly",
+        }}
       >
-        Attack
-      </button>
-      <button
-        onClick={() =>
-          attackOpponent(
-            current_player_pokemon,
-            current_opponent_pokemon,
-            "special_attack"
-          )
-        }
-      >
-        Special Attack
-      </button>
+        <button
+          onClick={() =>
+            attackOpponent(
+              current_player_pokemon,
+              current_opponent_pokemon,
+              "attack"
+            )
+          }
+          style={{ width: "40%" }}
+        >
+          Attack
+        </button>
+        <button
+          onClick={() =>
+            attackOpponent(
+              current_player_pokemon,
+              current_opponent_pokemon,
+              "special_attack"
+            )
+          }
+          style={{ width: "40%" }}
+        >
+          Special Attack
+        </button>
+      </div>
     </div>
   );
 

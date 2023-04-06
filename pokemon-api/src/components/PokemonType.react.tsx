@@ -8,7 +8,7 @@ interface PokemonTypeProps {
 const base_style = {
   padding: "5px",
   borderRadius: "5px",
-  margin: "5px",
+  //margin: "5px",
   display: "inline-block",
   fontSize: "12px",
   width: "80px",

@@ -90,10 +90,14 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
   }
 
   return (
-    <div style={{ margin: "20px" }}>
-      <h1>Game</h1>
+    <div style={{ margin: "10px" }}>
       <div
-        style={{ margin: "10px 0px", display: "flex", flexDirection: "row" }}
+        style={{
+          margin: "0",
+          display: "flex",
+          flexDirection: "row",
+          maxWidth: "400px",
+        }}
       >
         <button
           onClick={() => setTab("selection_screen")}
@@ -109,7 +113,11 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
           onClick={() => setTab("battle_screen")}
           className={`GameViewTab ${tab === "battle_screen" ? "active" : ""}`}
           id="BattleScreenTab"
-          style={{ backgroundColor: "#FF5959", width: "50%" }}
+          style={{
+            backgroundColor: "#FF5959",
+            width: "50%",
+            maxWidth: "400px",
+          }}
         >
           Battle!
         </button>

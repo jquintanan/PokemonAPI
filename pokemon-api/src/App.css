@@ -170,9 +170,9 @@ h1 {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   color: #ffffff;
   display: inline-block;
-  margin: 20px;
-  width: 100%;
-  padding: 10px;
+  /* margin: 20px; */
+  /* width: 100%; */
+  /* padding: 10px; */
   text-align: center;
 }
 
@@ -184,7 +184,6 @@ h1 {
 
 .Pokemon img {
   height: 200px;
-  margin-bottom: 10px;
   width: 200px;
 }
 
@@ -207,7 +206,7 @@ h1 {
 }
 
 .section {
-  margin-top: 20px;
+  margin-top: 10px;
   justify-content: center;
   width: 100%;
 }
@@ -285,7 +284,7 @@ button {
   font-size: 18px;
   cursor: pointer;
   outline: none;
-  margin-right: 10px;
+  /* margin-right: 10px; */
   border-radius: 1px;
   transition: background-color 0.3s ease-in-out;
 }

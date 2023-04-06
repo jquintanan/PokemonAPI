@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { PokemonListView } from "./components/PokemonListView.react";
+import { PokemonPokeDexView } from "./components/PokemonPokeDexView.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
 import {
   PokemonData,
@@ -11,6 +11,7 @@ import {
   fetchPokemonList,
 } from "./api";
 import { PokemonGameView } from "./components/PokemonGameView.react";
+import { AboutView } from "./components/AboutView.react";
 
 function App() {
   const [pokemonList, setPokemonList] = useState<any[]>([]);
@@ -65,10 +66,10 @@ function App() {
             <nav id="site_navigation_bar">
               <ul>
                 <li>
-                  <Link to="/">Home</Link>
+                  <Link to="/">Game</Link>
                 </li>
                 <li>
-                  <Link to="/game">Game</Link>
+                  <Link to="/pokedex">PokeDex</Link>
                 </li>
 
                 <li>
@@ -80,17 +81,17 @@ function App() {
         </div>
         <Routes>
           <Route
-            path="/"
+            path="/pokedex"
             element={
               pokemonData.length > 0 ? (
-                <PokemonListView pokemonData={pokemonData} />
+                <PokemonPokeDexView pokemonData={pokemonData} />
               ) : (
                 <h1>Loading...</h1>
               )
             }
           />
           <Route
-            path="/game"
+            path="/"
             element={
               pokemonData.length > 0 ? (
                 <PokemonGameView pokemonData={pokemonData} />
@@ -99,17 +100,7 @@ function App() {
               )
             }
           />
-          <Route
-            path="/about"
-            element={
-              <div style={{ textAlign: "center" }}>
-                <h1>About</h1>
-                <p>Joel Quintana</p>
-                <p>jquintanan@gmail.com</p>
-                <p>joelquintana.com</p>
-              </div>
-            }
-          />
+          <Route path="/about" element={<AboutView />} />
           <Route
             path="/profile/:id"
             element={<PokemonProfileView data={pokemonData} />}
