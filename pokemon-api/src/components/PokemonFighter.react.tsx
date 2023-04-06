@@ -60,6 +60,9 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        // borderColor: isShiny ? "#B8860B" : "",
+        // borderWidth: isShiny ? "2px" : "",
+        // padding: isShiny ? "-2px" : "",
       }}
     >
       <h3>
@@ -87,24 +90,59 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
 
       <div className="section">
         <h4>Stats</h4>
-        <table>
-          <tbody>
-            {pokemonData.stats.map((stat) => {
-              return (
-                <tr style={{ width: "100%" }}>
-                  <td className="stat-name">{stat.stat.name}</td>
-                  <td className="stat-value">{stat.base_stat}</td>
-                  <td className="stat-container">
-                    <div
-                      className="stat-bar"
-                      style={getStatBarStyle(stat.stat.name, stat.base_stat)}
-                    ></div>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <div style={{ marginTop: "10px" }}>
+          {pokemonData.stats.map((stat) => {
+            return (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  padding: "0",
+                  margin: "0",
+                }}
+              >
+                <div
+                  style={{
+                    width: "45%",
+                    textAlign: "right",
+                    margin: "0",
+                    padding: "0",
+                    paddingRight: "5px",
+                    minWidth: "115px",
+                  }}
+                >
+                  {stat.stat.name}
+                </div>
+                <div
+                  style={{
+                    width: "30px",
+                    minWidth: "30px",
+                    textAlign: "right",
+                    margin: "0",
+                    padding: "0",
+                  }}
+                >
+                  {stat.base_stat}
+                </div>
+                <div
+                  style={{
+                    width: "45%",
+                    margin: "0",
+                    padding: "0",
+                    paddingLeft: "10px",
+                  }}
+                >
+                  <div
+                    className="stat-bar"
+                    style={getStatBarStyle(stat.stat.name, stat.base_stat)}
+                  ></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
       {fighterMode === "selection" && (
         <div className="section">

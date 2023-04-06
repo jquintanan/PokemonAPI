@@ -43,13 +43,23 @@ function App() {
     });
   }, [pokemonList]);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <Router>
       <div className="App">
         <div className="App-header">
           <div id="app_title_name">
             <img src="pokeball.png" alt="pokeball" id="pokeball_icon" />
-            <h1>Pokemon API Test</h1>
+            <h1 style={{ display: isMobile ? "none" : "" }}>Pokemon TOJO</h1>
           </div>
           <div id="navigation_bar">
             <nav id="site_navigation_bar">

@@ -85,58 +85,50 @@ export const PokemonGameBattleScreen: React.FC<
         justifyContent: "space-evenly",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <div className="playerSide" style={battle_portrait_style}>
-          <h3>Your Pokemon</h3>
-          {selectedPokemon.map((pokemon) => {
-            //show the selected pokemon
-            return (
-              <PokemonFighter
-                pokemonData={selectedPokemon[0]}
-                minStats={minStats}
-                maxStats={maxStats}
-                fighterMode="battle"
-              />
-            );
-          })}
-          <div style={{ width: "100%", padding: "0px 20px" }}>
-            <PokemonHPBar
-              currentHP={playerHP}
-              maxHP={current_player_pokemon.stats[0].base_stat}
+      <div className="playerSide" style={battle_portrait_style}>
+        <h3>Your Pokemon</h3>
+        {selectedPokemon.map((pokemon) => {
+          //show the selected pokemon
+          return (
+            <PokemonFighter
+              pokemonData={selectedPokemon[0]}
+              minStats={minStats}
+              maxStats={maxStats}
+              fighterMode="battle"
             />
-          </div>
-        </div>
-        <div className="opponentSide" style={battle_portrait_style}>
-          <h3>Opponent Pokemon</h3>
-          <PokemonFighter
-            pokemonData={opponentPokemon.data}
-            minStats={minStats}
-            maxStats={maxStats}
-            fighterMode="battle"
-            isShiny={opponentPokemon.isShiny}
+          );
+        })}
+        <div style={{ width: "100%", padding: "0px 20px" }}>
+          <PokemonHPBar
+            currentHP={playerHP}
+            maxHP={current_player_pokemon.stats[0].base_stat}
           />
-          <div style={{ width: "100%", padding: "0px 20px" }}>
-            <PokemonHPBar
-              currentHP={opponentHP}
-              maxHP={current_opponent_pokemon.stats[0].base_stat}
-            />
-          </div>
-          <button
-            onClick={() => {
-              initializeBattleLog();
-              setOpponentPokemon(getRandomPokemon());
-            }}
-            style={{ width: "50%", margin: "10px" }}
-          >
-            Randomize Opponent
-          </button>
         </div>
+      </div>
+      <div className="opponentSide" style={battle_portrait_style}>
+        <h3>Opponent Pokemon</h3>
+        <PokemonFighter
+          pokemonData={opponentPokemon.data}
+          minStats={minStats}
+          maxStats={maxStats}
+          fighterMode="battle"
+          isShiny={opponentPokemon.isShiny}
+        />
+        <div style={{ width: "100%", padding: "0px 20px" }}>
+          <PokemonHPBar
+            currentHP={opponentHP}
+            maxHP={current_opponent_pokemon.stats[0].base_stat}
+          />
+        </div>
+        <button
+          onClick={() => {
+            initializeBattleLog();
+            setOpponentPokemon(getRandomPokemon());
+          }}
+          style={{ width: "50%", margin: "10px" }}
+        >
+          Randomize Opponent
+        </button>
       </div>
     </div>
   );

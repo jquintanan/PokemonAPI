@@ -91,7 +91,7 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
 
   return (
     <div style={{ margin: "20px" }}>
-      <h1>Pokemon Battle Game</h1>
+      <h1>Game</h1>
       <div
         style={{ margin: "10px 0px", display: "flex", flexDirection: "row" }}
       >
