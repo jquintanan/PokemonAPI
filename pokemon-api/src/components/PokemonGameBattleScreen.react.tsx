@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { PokemonData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
-import { PokemonHPBar } from "./PokemonHPBar.react";
 import { calculateTypeMultiplier } from "./PokemonType.react";
+import { log } from "../PokemonAppLogger";
 
 interface PokemonGameBattleScreenProps {
   pokemonData: PokemonData[];
@@ -14,6 +14,9 @@ interface PokemonGameBattleScreenProps {
 export const PokemonGameBattleScreen: React.FC<
   PokemonGameBattleScreenProps
 > = ({ pokemonData, minStats, maxStats, selectedPokemon }) => {
+  useEffect(() => {
+    log("battle_screen");
+  }, []);
   console.log("Rendering PokemonGame-BattleScreen");
 
   const [battleLog, setBattleLog] = useState<
@@ -121,6 +124,7 @@ export const PokemonGameBattleScreen: React.FC<
         </div>
         <button
           onClick={() => {
+            log("click_next_opponent");
             initializeBattleLog();
             setOpponentPokemon(getRandomPokemon());
           }}
@@ -253,25 +257,27 @@ export const PokemonGameBattleScreen: React.FC<
         }}
       >
         <button
-          onClick={() =>
+          onClick={() => {
+            log("click_attack");
             attackOpponent(
               current_player_pokemon,
               current_opponent_pokemon,
               "attack"
-            )
-          }
+            );
+          }}
           style={{ width: "40%", maxWidth: "300px" }}
         >
           Attack
         </button>
         <button
-          onClick={() =>
+          onClick={() => {
+            log("click_special_attack");
             attackOpponent(
               current_player_pokemon,
               current_opponent_pokemon,
               "special_attack"
-            )
-          }
+            );
+          }}
           style={{ width: "40%", maxWidth: "300px" }}
         >
           Special Attack

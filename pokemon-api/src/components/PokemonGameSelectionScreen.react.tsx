@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PokemonData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
+import { log } from "../PokemonAppLogger";
 
 interface PokemonGameSelectionScreenProps {
   pokemonData: PokemonData[];
@@ -19,11 +20,12 @@ export const PokemonGameSelectionScreen: React.FC<
   selectedPokemon,
   setSelectedPokemon,
 }) => {
+  useEffect(() => {
+    log("selection_screen");
+  }, []);
   console.log("Rendering PokemonGameView-SelectionScreen");
-  const place_holder_pokemon: PokemonData = pokemonData[0];
-
   const current_selection = selectedPokemon.length > 0 &&
-    selectedPokemon[0] != undefined && (
+    selectedPokemon[0] !== undefined && (
       <div style={{ margin: "10px 0px" }}>
         Current selection:
         {selectedPokemon.map((pokemon) => {

@@ -1,16 +1,33 @@
+import { useEffect } from "react";
+import { log } from "../PokemonAppLogger";
+
 interface AboutViewProps {}
 
 export const AboutView: React.FC<AboutViewProps> = () => {
+  useEffect(() => {
+    log("about_view");
+  }, []);
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "center", padding: "10px" }}>
       <h1>About</h1>
       <div className="section">
         <h2>Joel Quintana</h2>
-        <p>joelquintana.com</p>
+        <p>
+          <a href="https://www.joelquintana.com">joelquintana.com</a>
+        </p>
       </div>
 
       <div className="section">
         <h3>Disclaimer</h3>
+        <p>
+          We use the{" "}
+          <a href="https://pokeapi.co/" target="_blank">
+            PokeAPI (https://pokeapi.co/)
+          </a>{" "}
+          to fetch data for this application. The PokeAPI provides a
+          comprehensive database of Pokemon-related information, and we are
+          grateful for their work in making this data available.
+        </p>
         <p>
           This app is not affiliated with, endorsed, sponsored, or specifically
           approved by the Pokémon Company, Nintendo, or any of their

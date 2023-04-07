@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { PokemonType } from "./PokemonType.react";
 import { PokemonData } from "../api";
 import { Link } from "react-router-dom";
+import { log } from "../PokemonAppLogger";
 
 interface PokemonPokeDexViewProps {
   pokemonData: PokemonData[];
@@ -10,6 +11,9 @@ interface PokemonPokeDexViewProps {
 export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
   pokemonData,
 }) => {
+  useEffect(() => {
+    log("pokedex_view");
+  }, []);
   const [filteredPokemonData, setFilteredPokemonData] = useState<PokemonData[]>(
     []
   );

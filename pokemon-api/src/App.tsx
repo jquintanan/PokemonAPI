@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { initializeApp } from "firebase/app";
-import { getAnalytics, logEvent } from "firebase/analytics";
 
 import { PokemonPokeDexView } from "./components/PokemonPokeDexView.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
@@ -15,22 +13,12 @@ import {
 } from "./api";
 import { PokemonGameView } from "./components/PokemonGameView.react";
 import { AboutView } from "./components/AboutView.react";
+import { log } from "./PokemonAppLogger";
 
 function App() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyAOTylCoOrqxdJV117qCJHXsBR9KJv4I5M",
-    authDomain: "joelquintana-pokemon-api.firebaseapp.com",
-    projectId: "joelquintana-pokemon-api",
-    storageBucket: "joelquintana-pokemon-api.appspot.com",
-    messagingSenderId: "861732344836",
-    appId: "1:861732344836:web:3e328b8911b7cf89e41151",
-    measurementId: "G-Y6C84KSC82",
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  logEvent(analytics, "page_view");
+  useEffect(() => {
+    log("site_root");
+  }, []);
 
   const [pokemonList, setPokemonList] = useState<any[]>([]);
   const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);

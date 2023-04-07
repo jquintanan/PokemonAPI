@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PokemonData } from "../api";
 import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
+import { log } from "../PokemonAppLogger";
 
 interface PokemonGameViewProps {
   pokemonData: PokemonData[];
@@ -10,6 +11,9 @@ interface PokemonGameViewProps {
 export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
   pokemonData,
 }) => {
+  useEffect(() => {
+    log("game_view");
+  }, []);
   console.log("Rendering PokemonGameView");
   const place_holder_pokemon: PokemonData = pokemonData[0];
 
