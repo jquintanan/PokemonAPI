@@ -13,7 +13,13 @@ export const AboutView: React.FC<AboutViewProps> = () => {
       <div className="section">
         <h2>Joel Quintana</h2>
         <p>
-          <a href="https://www.joelquintana.com">joelquintana.com</a>
+          <a
+            href="https://www.joelquintana.com"
+            target="_blank"
+            rel="noreferrer"
+          >
+            joelquintana.com
+          </a>
         </p>
       </div>
 
@@ -21,7 +27,7 @@ export const AboutView: React.FC<AboutViewProps> = () => {
         <h3>Disclaimer</h3>
         <p>
           We use the{" "}
-          <a href="https://pokeapi.co/" target="_blank">
+          <a href="https://pokeapi.co/" target="_blank" rel="noreferrer">
             PokeAPI (https://pokeapi.co/)
           </a>{" "}
           to fetch data for this application. The PokeAPI provides a
