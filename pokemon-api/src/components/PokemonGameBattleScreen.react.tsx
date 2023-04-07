@@ -72,6 +72,7 @@ export const PokemonGameBattleScreen: React.FC<
 
   const player_side_style: React.CSSProperties = {
     width: "50%",
+    maxWidth: "400px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -243,12 +244,12 @@ export const PokemonGameBattleScreen: React.FC<
 
   const player_actions = (
     <div className="section">
-      <h3>Your Actions</h3>
+      <h3 style={{ textAlign: "center" }}>Your Actions</h3>
       <div
         style={{
           display: "flex",
           flexDirection: "row",
-          justifyContent: "space-evenly",
+          justifyContent: "center",
         }}
       >
         <button
@@ -259,7 +260,7 @@ export const PokemonGameBattleScreen: React.FC<
               "attack"
             )
           }
-          style={{ width: "40%" }}
+          style={{ width: "40%", maxWidth: "300px" }}
         >
           Attack
         </button>
@@ -271,7 +272,7 @@ export const PokemonGameBattleScreen: React.FC<
               "special_attack"
             )
           }
-          style={{ width: "40%" }}
+          style={{ width: "40%", maxWidth: "300px" }}
         >
           Special Attack
         </button>
