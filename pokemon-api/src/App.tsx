@@ -5,50 +5,20 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import { PokemonPokeDexView } from "./components/PokemonPokeDexView.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
-import {
-  PokemonData,
-  fetchPokedexEntry,
-  fetchPokemonData,
-  fetchPokemonList,
-} from "./api";
+import { PokemonAllData, fetchAllData } from "./api";
 import { PokemonGameView } from "./components/PokemonGameView.react";
 import { AboutView } from "./components/AboutView.react";
 import { log } from "./PokemonAppLogger";
 
 function App() {
+  const [pokemonData, setPokemonData] = useState<PokemonAllData[]>([]);
+
   useEffect(() => {
     log("site_root");
-  }, []);
-
-  const [pokemonList, setPokemonList] = useState<any[]>([]);
-  const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
-  useEffect(() => {
-    fetchPokemonList().then((response) => {
-      setPokemonList(response.results);
+    fetchAllData().then((response) => {
+      setPokemonData(response);
     });
   }, []);
-
-  useEffect(() => {
-    Promise.all(
-      pokemonList.map((pokemon: any) => {
-        const pokemon_id = pokemon.url.split("/").slice(-2, -1)[0];
-        return Promise.all([
-          fetchPokemonData(pokemon_id),
-          fetchPokedexEntry(pokemon_id),
-        ]).then(([pokemonData, speciesData]) => {
-          return {
-            ...pokemonData,
-            pokedexEntry: speciesData.flavor_text_entries
-              .find((entry: any) => entry.language.name === "en")
-              .flavor_text.replace("\n", " ")
-              .replace("\f", " "),
-          };
-        });
-      })
-    ).then((responses) => {
-      setPokemonData(responses);
-    });
-  }, [pokemonList]);
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {

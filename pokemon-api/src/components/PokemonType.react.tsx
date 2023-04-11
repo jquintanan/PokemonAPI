@@ -1,5 +1,5 @@
 import React from "react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 
 interface PokemonTypeProps {
   name: string;
@@ -233,13 +233,15 @@ const TYPE_CHART: { [key: string]: { [key: string]: number } } = {
 };
 
 export function calculateTypeMultiplier(
-  attacker: PokemonData,
-  defender: PokemonData
+  attacker: PokemonAllData,
+  defender: PokemonAllData
 ) {
   let multiplier = 1;
-  const defenderTypes = defender.types.map((type) => type.type.name);
+  const defenderTypes = defender.pokemon_data.types.map(
+    (type) => type.type.name
+  );
 
-  attacker.types.forEach((type) => {
+  attacker.pokemon_data.types.forEach((type) => {
     const attackType = type.type.name;
     const typeEffectiveness = TYPE_CHART[attackType];
     defenderTypes.forEach((defenderType) => {

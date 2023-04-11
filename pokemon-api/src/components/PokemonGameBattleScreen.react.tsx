@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { calculateTypeMultiplier } from "./PokemonType.react";
 import { log } from "../PokemonAppLogger";
 
 interface PokemonGameBattleScreenProps {
-  pokemonData: PokemonData[];
+  pokemonData: PokemonAllData[];
   minStats: { [key: string]: number };
   maxStats: { [key: string]: number };
-  selectedPokemon: PokemonData[];
+  selectedPokemon: PokemonAllData[];
 }
 
 export const PokemonGameBattleScreen: React.FC<
@@ -23,7 +23,7 @@ export const PokemonGameBattleScreen: React.FC<
     { time: string; message: string }[]
   >([]);
   const [opponentPokemon, setOpponentPokemon] = useState<{
-    data: PokemonData;
+    data: PokemonAllData;
     isShiny: boolean;
   }>({ data: pokemonData[0], isShiny: false });
   const [playerHP, setPlayerHP] = useState<number>(0);
@@ -32,7 +32,7 @@ export const PokemonGameBattleScreen: React.FC<
   const [shinyKillStreak, setShinyKillStreak] = useState<number>(0);
 
   //select a random pokemon for the opponent
-  function getRandomPokemon(): { data: PokemonData; isShiny: boolean } {
+  function getRandomPokemon(): { data: PokemonAllData; isShiny: boolean } {
     return {
       data: pokemonData[Math.floor(Math.random() * (pokemonData.length - 1))],
       isShiny: Math.random() < 0.2,
@@ -68,8 +68,8 @@ export const PokemonGameBattleScreen: React.FC<
   const current_opponent_pokemon = opponentPokemon.data;
   // Initialize player and opponent HP based on selected and opponent pokemon stats
   useEffect(() => {
-    setPlayerHP(current_player_pokemon.stats[0].base_stat);
-    setOpponentHP(current_opponent_pokemon.stats[0].base_stat);
+    setPlayerHP(current_player_pokemon.pokemon_data.stats[0].base_stat);
+    setOpponentHP(current_opponent_pokemon.pokemon_data.stats[0].base_stat);
     // eslint-disable-next-line
   }, [selectedPokemon, opponentPokemon]);
 
@@ -102,7 +102,7 @@ export const PokemonGameBattleScreen: React.FC<
             maxStats={maxStats}
             fighterMode="battle"
             currentHP={playerHP}
-            maxHP={current_player_pokemon.stats[0].base_stat}
+            maxHP={current_player_pokemon.pokemon_data.stats[0].base_stat}
           />
         </div>
       </div>
@@ -119,7 +119,7 @@ export const PokemonGameBattleScreen: React.FC<
             fighterMode="battle"
             isShiny={opponentPokemon.isShiny}
             currentHP={opponentHP}
-            maxHP={current_opponent_pokemon.stats[0].base_stat}
+            maxHP={current_opponent_pokemon.pokemon_data.stats[0].base_stat}
           />
         </div>
         <button
@@ -139,8 +139,8 @@ export const PokemonGameBattleScreen: React.FC<
   type AttackType = "attack" | "special_attack";
   //function to attack the opponent and redice their hp
   function attackOpponent(
-    attacker: PokemonData,
-    defender: PokemonData,
+    attacker: PokemonAllData,
+    defender: PokemonAllData,
     type: AttackType
   ) {
     const new_battle_log = [...battleLog];
@@ -189,12 +189,12 @@ export const PokemonGameBattleScreen: React.FC<
 
     const attackerStat =
       type === "attack"
-        ? attacker.stats[1].base_stat
-        : attacker.stats[3].base_stat;
+        ? attacker.pokemon_data.stats[1].base_stat
+        : attacker.pokemon_data.stats[3].base_stat;
     const defenderStat =
       type === "attack"
-        ? attacker.stats[2].base_stat
-        : attacker.stats[4].base_stat;
+        ? attacker.pokemon_data.stats[2].base_stat
+        : attacker.pokemon_data.stats[4].base_stat;
     const basePower = 40; // use a fixed base power if the move doesn't have one
 
     const random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0

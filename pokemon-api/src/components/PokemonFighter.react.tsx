@@ -1,13 +1,13 @@
 import React from "react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { PokemonType } from "./PokemonType.react";
 import { PokemonHPBar } from "./PokemonHPBar.react";
 
 interface PokemonFighterProps {
-  pokemonData: PokemonData;
+  pokemonData: PokemonAllData;
   maxStats: { [key: string]: number };
   minStats: { [key: string]: number };
-  setSelectedPokemon?: ((pokemon: PokemonData[]) => void) | null;
+  setSelectedPokemon?: ((pokemon: PokemonAllData[]) => void) | null;
   fighterMode: FighterMode;
   isShiny?: boolean;
   maxHP?: number;
@@ -90,9 +90,9 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           height: "20px",
         }}
       >
-        {pokemonData.types.map((type) => {
+        {pokemonData.pokemon_data.types.map((type) => {
           return (
-            <div className="PokemonType">
+            <div className="PokemonType" key={type.type.name}>
               <PokemonType name={type.type.name} />
             </div>
           );
@@ -101,8 +101,8 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
       <img
         src={
           isShiny
-            ? pokemonData.sprites.front_shiny
-            : pokemonData.sprites.front_default
+            ? pokemonData.pokemon_data.sprites.front_shiny
+            : pokemonData.pokemon_data.sprites.front_default
         }
         alt="pokemon"
       />
@@ -110,7 +110,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         <div className="section">
           <h4>Stats</h4>
           <div style={{ marginTop: "10px" }}>
-            {pokemonData.stats.map((stat) => {
+            {pokemonData.pokemon_data.stats.map((stat) => {
               return (
                 <div
                   style={{
@@ -121,6 +121,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
                     padding: "0",
                     margin: "0",
                   }}
+                  key={stat.stat.name}
                 >
                   <div
                     style={{

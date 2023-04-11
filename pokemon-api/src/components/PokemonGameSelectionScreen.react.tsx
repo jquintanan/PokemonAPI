@@ -1,14 +1,14 @@
 import { useEffect } from "react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
 
 interface PokemonGameSelectionScreenProps {
-  pokemonData: PokemonData[];
+  pokemonData: PokemonAllData[];
   minStats: { [key: string]: number };
   maxStats: { [key: string]: number };
-  selectedPokemon: PokemonData[];
-  setSelectedPokemon?: ((pokemon: PokemonData[]) => void) | null;
+  selectedPokemon: PokemonAllData[];
+  setSelectedPokemon?: ((pokemon: PokemonAllData[]) => void) | null;
 }
 
 export const PokemonGameSelectionScreen: React.FC<
@@ -30,9 +30,15 @@ export const PokemonGameSelectionScreen: React.FC<
         Current selection:
         {selectedPokemon.map((pokemon) => {
           return (
-            <div style={{ width: "100px", textAlign: "center" }}>
+            <div
+              style={{ width: "100px", textAlign: "center" }}
+              key={"current_Selection " + pokemon.id}
+            >
               <div>
-                <img src={pokemon.sprites.front_default} alt={pokemon.name} />
+                <img
+                  src={pokemon.pokemon_data.sprites.front_default}
+                  alt={pokemon.name}
+                />
               </div>
               <div>{pokemon.name}</div>
             </div>
@@ -55,6 +61,7 @@ export const PokemonGameSelectionScreen: React.FC<
         {pokemonData.map((pokemon) => {
           return (
             <div
+              key={"index_selection " + pokemon.id}
               className="border_for_selected"
               style={{
                 //width: "100%",

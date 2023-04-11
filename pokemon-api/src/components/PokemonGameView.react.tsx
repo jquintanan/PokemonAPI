@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";
 
 interface PokemonGameViewProps {
-  pokemonData: PokemonData[];
+  pokemonData: PokemonAllData[];
 }
 
 export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
@@ -15,17 +15,17 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
     log("game_view");
   }, []);
   console.log("Rendering PokemonGameView");
-  const place_holder_pokemon: PokemonData = pokemonData[0];
+  const place_holder_pokemon: PokemonAllData = pokemonData[0];
 
   type Tab = "selection_screen" | "battle_screen";
 
   const [tab, setTab] = useState<Tab>("selection_screen");
-  const [selectedPokemon, setSelectedPokemon] = useState<PokemonData[]>([
+  const [selectedPokemon, setSelectedPokemon] = useState<PokemonAllData[]>([
     place_holder_pokemon,
   ]);
 
   //Calculate min and max stats
-  function getStatsUpperAndLowerBounds(pokemonData: PokemonData[]): {
+  function getStatsUpperAndLowerBounds(pokemonData: PokemonAllData[]): {
     maxStats: { [key: string]: number };
     minStats: { [key: string]: number };
   } {
@@ -49,7 +49,7 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
     };
 
     pokemonData.forEach((pokemon) => {
-      pokemon.stats.forEach((stat) => {
+      pokemon.pokemon_data.stats.forEach((stat) => {
         if (stat.base_stat > maxStats[stat.stat.name]) {
           maxStats[stat.stat.name] = stat.base_stat;
         }

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { PokemonType } from "./PokemonType.react";
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { Link } from "react-router-dom";
 import { log } from "../PokemonAppLogger";
 
 interface PokemonPokeDexViewProps {
-  pokemonData: PokemonData[];
+  pokemonData: PokemonAllData[];
 }
 
 export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
@@ -14,9 +14,9 @@ export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
   useEffect(() => {
     log("pokedex_view");
   }, []);
-  const [filteredPokemonData, setFilteredPokemonData] = useState<PokemonData[]>(
-    []
-  );
+  const [filteredPokemonData, setFilteredPokemonData] = useState<
+    PokemonAllData[]
+  >([]);
   const [search, setSearch] = useState("");
   const [selectedType, setSelectedType] = useState<string>("");
 
@@ -27,7 +27,9 @@ export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
 
     if (selectedType !== "") {
       filteredPokemonDataTemp = filteredPokemonDataTemp.filter((pokemon) =>
-        pokemon.types.some((type) => type.type.name === selectedType)
+        pokemon.pokemon_data.types.some(
+          (type) => type.type.name === selectedType
+        )
       );
     }
     setFilteredPokemonData(filteredPokemonDataTemp);
@@ -97,17 +99,17 @@ export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
                 <td>
                   <Link to={`/profile/${pokemon.id}`}>{pokemon.name}</Link>
                 </td>
-                <td>{pokemon.pokedexEntry}</td>
-                <td>{pokemon.height}</td>
-                <td>{pokemon.weight}</td>
+                <td>{pokemon.dex_entry}</td>
+                <td>{pokemon.pokemon_data.height}</td>
+                <td>{pokemon.pokemon_data.weight}</td>
                 <td>
-                  {pokemon.types.map((type) => {
+                  {pokemon.pokemon_data.types.map((type) => {
                     return <PokemonType name={type.type.name} />;
                   })}
                 </td>
                 <td>
                   <img
-                    src={pokemon.sprites.front_default}
+                    src={pokemon.pokemon_data.sprites.front_default}
                     alt={pokemon.name}
                     height={"200px"}
                     width={"200px"}
@@ -115,7 +117,7 @@ export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
                 </td>
                 <td>
                   <img
-                    src={pokemon.sprites.front_shiny}
+                    src={pokemon.pokemon_data.sprites.front_shiny}
                     alt={pokemon.name}
                     height={"200px"}
                     width={"200px"}

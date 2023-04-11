@@ -1,5 +1,17 @@
 const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=151";
 
+export interface PokemonListElement {
+  name: string;
+  url: string;
+}
+
+export interface PokemonList {
+  count: number;
+  next: string;
+  previous: string;
+  results: PokemonListElement[];
+}
+
 export interface PokemonData {
   id: number;
   name: string;
@@ -28,11 +40,66 @@ export interface PokemonData {
       name: string;
     };
   }[];
-  pokedexEntry: string;
-  //add whole new branch to store species related data
+  species: {
+    url: string;
+  };
 }
 
-export function fetchPokemonList(): Promise<any> {
+export interface SpeciesData {
+  pokedexEntry: string;
+  base_happiness: number;
+  capture_rate: number;
+  is_baby: boolean;
+  is_legendary: boolean;
+  is_mythical: boolean;
+  id: number;
+  flavor_text_entries: {
+    flavor_text: string;
+    language: {
+      name: string;
+    };
+  }[];
+}
+
+export interface PokemonAllData {
+  id: number;
+  name: string;
+  dex_entry: string;
+  pokemon_data: PokemonData;
+  species_data: SpeciesData;
+}
+
+export async function fetchAllData(): Promise<PokemonAllData[]> {
+  const pokemon_list = await fetchPokemonList();
+
+  const all_data: PokemonAllData[] = await Promise.all(
+    pokemon_list.results.map(async (pokemon) => {
+      const pokemon_data = await fetchPokemonDataURL(pokemon.url);
+
+      const species_data = await fetchSpeciesDataURL(pokemon_data.species.url);
+
+      const id: number = pokemon_data.id;
+
+      const dex_entry =
+        species_data.flavor_text_entries
+          .find((entry) => entry.language.name === "en")
+          ?.flavor_text.replace("\n", " ")
+          .replace("\f", " ") ?? "";
+
+      return {
+        id: id,
+        name: pokemon.name,
+        dex_entry: dex_entry,
+        pokemon_data,
+        species_data,
+      };
+    })
+  );
+
+  return all_data;
+}
+
+export function fetchPokemonList(): Promise<PokemonList> {
   return fetch(API_URL)
     .then((response) => {
       if (!response.ok) {
@@ -63,7 +130,22 @@ export function fetchPokemonData(id: number): Promise<PokemonData> {
     });
 }
 
-export function fetchPokedexEntry(id: number): Promise<any> {
+export function fetchPokemonDataURL(url: string): Promise<PokemonData> {
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("There was a problem with the network request:", error);
+      throw error;
+    });
+}
+
+export function fetchSpeciesData(id: number): Promise<SpeciesData> {
   const fetch_data_uri = `https://pokeapi.co/api/v2/pokemon-species/${id}/`;
   return fetch(fetch_data_uri)
     .then((response) => {
@@ -79,6 +161,22 @@ export function fetchPokedexEntry(id: number): Promise<any> {
     });
 }
 
+export function fetchSpeciesDataURL(url: string): Promise<SpeciesData> {
+  return fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("There was a problem with the network request:", error);
+      throw error;
+    });
+}
+
+//TODO: Calculate from PokemonAllData instead of calling another webservice
 export function calculateHp(pokemonId: number, level: number): Promise<number> {
   // Make a request to the Pokemon API to get the base stats for the Pokemon
   return fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`)

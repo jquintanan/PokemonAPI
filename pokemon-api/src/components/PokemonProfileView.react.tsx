@@ -1,17 +1,17 @@
 import { Link, useParams } from "react-router-dom";
 
-import { PokemonData } from "../api";
+import { PokemonAllData } from "../api";
 import { useState, useEffect } from "react";
 import { Pokemon } from "./Pokemon.react";
 
 interface PokemonProfileViewProps {
-  data: PokemonData[];
+  data: PokemonAllData[];
 }
 
 export const PokemonProfileView: React.FC<PokemonProfileViewProps> = ({
   data,
 }) => {
-  const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
+  const [pokemonData, setPokemonData] = useState<PokemonAllData | null>(null);
 
   const { id } = useParams();
   useEffect(() => {
