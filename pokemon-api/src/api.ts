@@ -69,17 +69,38 @@ export interface PokemonAllData {
   species_data: SpeciesData;
 }
 
+export interface PokemonInstance {
+  data: PokemonAllData;
+  isShiny: boolean;
+  level: number;
+  max_hp: number;
+  current_hp: number;
+}
+
+export function fetchPokemonList(): Promise<PokemonList> {
+  return fetch(API_URL)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("There was a problem with the network request:", error);
+      throw error;
+    });
+}
+
 export async function fetchAllData(): Promise<PokemonAllData[]> {
   const pokemon_list = await fetchPokemonList();
 
   const all_data: PokemonAllData[] = await Promise.all(
     pokemon_list.results.map(async (pokemon) => {
       const pokemon_data = await fetchPokemonDataURL(pokemon.url);
-
       const species_data = await fetchSpeciesDataURL(pokemon_data.species.url);
 
       const id: number = pokemon_data.id;
-
       const dex_entry =
         species_data.flavor_text_entries
           .find((entry) => entry.language.name === "en")
@@ -99,55 +120,8 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
   return all_data;
 }
 
-export function fetchPokemonList(): Promise<PokemonList> {
-  return fetch(API_URL)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the network request:", error);
-      throw error;
-    });
-}
-
-export function fetchPokemonData(id: number): Promise<PokemonData> {
-  const fetch_data_uri = `https://pokeapi.co/api/v2/pokemon/${id}/`;
-  return fetch(fetch_data_uri)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the network request:", error);
-      throw error;
-    });
-}
-
 export function fetchPokemonDataURL(url: string): Promise<PokemonData> {
   return fetch(url)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      return response.json();
-    })
-    .catch((error) => {
-      console.error("There was a problem with the network request:", error);
-      throw error;
-    });
-}
-
-export function fetchSpeciesData(id: number): Promise<SpeciesData> {
-  const fetch_data_uri = `https://pokeapi.co/api/v2/pokemon-species/${id}/`;
-  return fetch(fetch_data_uri)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
