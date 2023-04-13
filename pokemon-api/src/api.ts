@@ -1,4 +1,13 @@
 const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=151";
+//this is a test
+//write an interface to hold all the battle data
+export interface BattleData {
+  pokemon1: PokemonInstance;
+  pokemon2: PokemonInstance;
+  turn: number;
+  winner: number;
+  battleLog: string[];
+}
 
 export interface PokemonListElement {
   name: string;
