@@ -3,6 +3,7 @@ import { PokemonAllData } from "../api";
 import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";
+import PokemonInstance from "../PokemonInstance.class";
 
 interface PokemonGameViewProps {
   pokemonData: PokemonAllData[];
@@ -24,8 +25,11 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
     place_holder_pokemon,
   ]);
 
+  //TODO: Move this function to a util file
   //Calculate min and max stats
-  function getStatsUpperAndLowerBounds(pokemonData: PokemonAllData[]): {
+  function getStatsUpperAndLowerBounds(
+    pokemonData: PokemonAllData[]
+  ): {
     maxStats: { [key: string]: number };
     minStats: { [key: string]: number };
   } {
@@ -40,24 +44,73 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
     };
 
     const minStats: { [key: string]: number } = {
-      hp: 999,
-      attack: 999,
-      defense: 999,
-      "special-attack": 999,
-      "special-defense": 999,
-      speed: 999,
+      hp: 999999,
+      attack: 999999,
+      defense: 999999,
+      "special-attack": 999999,
+      "special-defense": 999999,
+      speed: 999999,
     };
 
     pokemonData.forEach((pokemon) => {
-      pokemon.pokemon_data.stats.forEach((stat) => {
-        if (stat.base_stat > maxStats[stat.stat.name]) {
-          maxStats[stat.stat.name] = stat.base_stat;
-        }
+      const stats_for_level_1 = PokemonInstance.getStatsFromPokemonDataAndLevel(
+        pokemon,
+        1
+      );
 
-        if (stat.base_stat < minStats[stat.stat.name]) {
-          minStats[stat.stat.name] = stat.base_stat;
-        }
-      });
+      maxStats.hp =
+        stats_for_level_1.max_hp > maxStats.hp
+          ? stats_for_level_1.max_hp
+          : maxStats.hp;
+      minStats.hp =
+        stats_for_level_1.max_hp < minStats.hp
+          ? stats_for_level_1.max_hp
+          : minStats.hp;
+
+      maxStats.attack =
+        stats_for_level_1.attack > maxStats.attack
+          ? stats_for_level_1.attack
+          : maxStats.attack;
+      minStats.attack =
+        stats_for_level_1.attack < minStats.attack
+          ? stats_for_level_1.attack
+          : minStats.attack;
+
+      maxStats.defense =
+        stats_for_level_1.defense > maxStats.defense
+          ? stats_for_level_1.defense
+          : maxStats.defense;
+      minStats.defense =
+        stats_for_level_1.defense < minStats.defense
+          ? stats_for_level_1.defense
+          : minStats.defense;
+
+      maxStats["special-attack"] =
+        stats_for_level_1.special_attack > maxStats["special-attack"]
+          ? stats_for_level_1.special_attack
+          : maxStats["special-attack"];
+      minStats["special-attack"] =
+        stats_for_level_1.special_attack < minStats["special-attack"]
+          ? stats_for_level_1.special_attack
+          : minStats["special-attack"];
+
+      maxStats["special-defense"] =
+        stats_for_level_1.special_defense > maxStats["special-defense"]
+          ? stats_for_level_1.special_defense
+          : maxStats["special-defense"];
+      minStats["special-defense"] =
+        stats_for_level_1.special_defense < minStats["special-defense"]
+          ? stats_for_level_1.special_defense
+          : minStats["special-defense"];
+
+      maxStats.speed =
+        stats_for_level_1.speed > maxStats.speed
+          ? stats_for_level_1.speed
+          : maxStats.speed;
+      minStats.speed =
+        stats_for_level_1.speed < minStats.speed
+          ? stats_for_level_1.speed
+          : minStats.speed;
     });
 
     // console.log(maxStats);

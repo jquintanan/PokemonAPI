@@ -1,3 +1,5 @@
+import PokemonInstance from "./PokemonInstance.class";
+
 const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=151";
 //this is a test
 //write an interface to hold all the battle data
@@ -78,14 +80,6 @@ export interface PokemonAllData {
   species_data: SpeciesData;
 }
 
-export interface PokemonInstance {
-  data: PokemonAllData;
-  isShiny: boolean;
-  level: number;
-  max_hp: number;
-  current_hp: number;
-}
-
 export function fetchPokemonList(): Promise<PokemonList> {
   return fetch(API_URL)
     .then((response) => {
@@ -156,30 +150,5 @@ export function fetchSpeciesDataURL(url: string): Promise<SpeciesData> {
     .catch((error) => {
       console.error("There was a problem with the network request:", error);
       throw error;
-    });
-}
-
-//TODO: Calculate from PokemonAllData instead of calling another webservice
-export function calculateHp(pokemonId: number, level: number): Promise<number> {
-  // Make a request to the Pokemon API to get the base stats for the Pokemon
-  return fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`)
-    .then((response) => response.json())
-    .then((data) => {
-      // Find the base HP stat for the Pokemon
-      const baseStats = data?.stats?.find(
-        (stat: any) => stat.stat.name === "hp"
-      );
-      const baseHp = baseStats?.base_stat ?? 0;
-
-      // Calculate the HP for the Pokemon based on its level and base HP
-      const calculatedHp = Math.floor(
-        ((2 * baseHp + 31) * level) / 100 + level + 10
-      );
-
-      return calculatedHp;
-    })
-    .catch((error) => {
-      console.error(`Error calculating HP for Pokemon ${pokemonId}: ${error}`);
-      return 0;
     });
 }

@@ -236,16 +236,29 @@ export function calculateTypeMultiplier(
   attacker: PokemonAllData,
   defender: PokemonAllData
 ) {
+  //Calculate type multiplier using all types of the attacker and defender
+  //Usually we only use the type of the attack, but since we dont have a specific attack, we use all types of the attacker
   let multiplier = 1;
+  const attackerTypes = attacker.pokemon_data.types.map(
+    (type) => type.type.name
+  );
+
   const defenderTypes = defender.pokemon_data.types.map(
     (type) => type.type.name
   );
 
-  attacker.pokemon_data.types.forEach((type) => {
-    const attackType = type.type.name;
-    const typeEffectiveness = TYPE_CHART[attackType];
-    defenderTypes.forEach((defenderType) => {
-      const effectiveness = typeEffectiveness[defenderType];
+  for (const attackType of attackerTypes) {
+    const chartForAttackType = TYPE_CHART[attackType];
+    if (!chartForAttackType) {
+      continue;
+    }
+
+    for (const defenderType of defenderTypes) {
+      const effectiveness = chartForAttackType[defenderType];
+      if (!effectiveness) {
+        continue;
+      }
+
       if (effectiveness === 0) {
         multiplier *= 0;
       } else if (effectiveness === 0.5) {
@@ -253,8 +266,8 @@ export function calculateTypeMultiplier(
       } else if (effectiveness === 2) {
         multiplier *= 2;
       }
-    });
-  });
+    }
+  }
 
   return multiplier;
 }

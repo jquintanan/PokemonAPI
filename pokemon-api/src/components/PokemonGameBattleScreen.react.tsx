@@ -3,6 +3,7 @@ import { PokemonAllData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { calculateTypeMultiplier } from "./PokemonType.react";
 import { log } from "../PokemonAppLogger";
+import PokemonInstance from "../PokemonInstance.class";
 
 interface PokemonGameBattleScreenProps {
   pokemonData: PokemonAllData[];
@@ -18,26 +19,29 @@ interface BattleLogEntry {
 
 const ALL_POKEMON_LEVEL = 100;
 
-export const PokemonGameBattleScreen: React.FC<
-  PokemonGameBattleScreenProps
-> = ({ pokemonData, minStats, maxStats, selectedPokemon }) => {
+export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = ({
+  pokemonData,
+  minStats,
+  maxStats,
+  selectedPokemon,
+}) => {
   useEffect(() => {
     log("battle_screen");
   }, []);
   console.log("Rendering PokemonGame-BattleScreen");
 
   const [battleLog, setBattleLog] = useState<BattleLogEntry[]>([]);
-  const [opponentPokemon, setOpponentPokemon] = useState<{
-    data: PokemonAllData;
-    isShiny: boolean;
-  }>({ data: pokemonData[0], isShiny: false });
-  const [playerHP, setPlayerHP] = useState<number>(0);
-  const [opponentHP, setOpponentHP] = useState<number>(0);
+  const [opponentInstance, setOpponentInstance] = useState<PokemonInstance>(
+    new PokemonInstance(pokemonData[0], false, ALL_POKEMON_LEVEL)
+  );
+  const [playerInstance, setPlayerInstance] = useState<PokemonInstance>(
+    new PokemonInstance(selectedPokemon[0], false, ALL_POKEMON_LEVEL)
+  );
+
   const [killStreak, setKillStreak] = useState<number>(0);
   const [shinyKillStreak, setShinyKillStreak] = useState<number>(0);
   const [skips, setSkips] = useState<number>(0);
   const [deathCount, setDeathCount] = useState<number>(0);
-  const [userLevel, setUserLevel] = useState<number>(1);
 
   //select a random pokemon for the opponent
   function getRandomPokemon(): { data: PokemonAllData; isShiny: boolean } {
@@ -57,8 +61,15 @@ export const PokemonGameBattleScreen: React.FC<
 
   useEffect(() => {
     //Assign a random pokemon to the opponent using the getTandomPokemon function
+    const new_opponent = getRandomPokemon();
     // eslint-disable-next-line
-    setOpponentPokemon(getRandomPokemon());
+    setOpponentInstance(
+      new PokemonInstance(
+        new_opponent.data,
+        new_opponent.isShiny,
+        ALL_POKEMON_LEVEL
+      )
+    );
     //Initialize battle log
     // eslint-disable-next-line
     initializeBattleLog();
@@ -73,15 +84,6 @@ export const PokemonGameBattleScreen: React.FC<
       <h4>Skips ⏩: {skips}</h4>
     </div>
   );
-
-  const current_player_pokemon = selectedPokemon[0];
-  const current_opponent_pokemon = opponentPokemon.data;
-  // Initialize player and opponent HP based on selected and opponent pokemon stats
-  useEffect(() => {
-    setPlayerHP(current_player_pokemon.pokemon_data.stats[0].base_stat);
-    setOpponentHP(current_opponent_pokemon.pokemon_data.stats[0].base_stat);
-    // eslint-disable-next-line
-  }, [selectedPokemon, opponentPokemon]);
 
   const player_side_style: React.CSSProperties = {
     width: "50%",
@@ -107,12 +109,10 @@ export const PokemonGameBattleScreen: React.FC<
 
         <div className="section">
           <PokemonFighter
-            pokemonData={selectedPokemon[0]}
             minStats={minStats}
             maxStats={maxStats}
             fighterMode="battle"
-            currentHP={playerHP}
-            maxHP={current_player_pokemon.pokemon_data.stats[0].base_stat}
+            pokemon_instance={playerInstance}
           />
         </div>
       </div>
@@ -123,24 +123,34 @@ export const PokemonGameBattleScreen: React.FC<
         <h3>Opponent</h3>
         <div className="section">
           <PokemonFighter
-            pokemonData={opponentPokemon.data}
             minStats={minStats}
             maxStats={maxStats}
             fighterMode="battle"
-            isShiny={opponentPokemon.isShiny}
-            currentHP={opponentHP}
-            maxHP={current_opponent_pokemon.pokemon_data.stats[0].base_stat}
+            pokemon_instance={opponentInstance}
           />
         </div>
         <button
           onClick={() => {
             log("click_next_opponent");
-            if (opponentHP > 0 && playerHP > 0) {
+            if (
+              opponentInstance.current_hp > 0 &&
+              playerInstance.current_hp > 0
+            ) {
               setSkips(skips + 1);
             }
 
+            if (playerInstance.current_hp <= 0) {
+              setPlayerInstance(playerInstance.resetHp());
+            }
+
             initializeBattleLog();
-            setOpponentPokemon(getRandomPokemon());
+            setOpponentInstance(
+              new PokemonInstance(
+                getRandomPokemon().data,
+                false,
+                ALL_POKEMON_LEVEL
+              )
+            );
           }}
           style={{ width: "50%", margin: "10px" }}
         >
@@ -151,40 +161,40 @@ export const PokemonGameBattleScreen: React.FC<
   );
 
   function processTurn(
-    user: PokemonAllData,
-    opponent: PokemonAllData,
+    user: PokemonInstance,
+    opponent: PokemonInstance,
     user_attack_type: AttackType
   ) {
     const new_battle_log = [...battleLog];
 
-    if (playerHP <= 0) {
+    if (playerInstance.current_hp <= 0) {
       new_battle_log.push(getMessageObject("You are dead!"));
       setBattleLog(new_battle_log);
       return;
     }
 
-    if (opponentHP <= 0) {
+    if (opponentInstance.current_hp <= 0) {
       const messages = [
-        `${current_opponent_pokemon.name} is already on the ground, give them a break!`,
-        `Looks like ${current_opponent_pokemon.name} is already defeated. Spare them the extra pain!`,
-        `It's over for ${current_opponent_pokemon.name}. Don't you have better things to do than attack a fainted pokemon?`,
-        `You did it! You beat a fainted ${current_opponent_pokemon.name}. How proud you must be...`,
-        `${current_opponent_pokemon.name} is down and out. There's no need to kick them while they're down!`,
+        `${opponent.data.name} is already on the ground, give them a break!`,
+        `Looks like ${opponent.data.name} is already defeated. Spare them the extra pain!`,
+        `It's over for ${opponent.data.name}. Don't you have better things to do than attack a fainted pokemon?`,
+        `You did it! You beat a fainted ${opponent.data.name}. How proud you must be...`,
+        `${opponent.data.name} is down and out. There's no need to kick them while they're down!`,
         `Congratulations! You beat a pokemon that was already defeated. How impressive...`,
-        `It's not exactly a fair fight when you attack a fainted ${current_opponent_pokemon.name}, is it?`,
-        `No need to keep attacking a fainted ${current_opponent_pokemon.name}. You've already won!`,
-        `We get it, you're strong. But did you really have to attack a fainted ${current_opponent_pokemon.name}?`,
-        `You beat a fainted ${current_opponent_pokemon.name}. How thrilling!`,
-        `${current_opponent_pokemon.name} is already defeated. Time to move on to bigger challenges!`,
-        `Did you really have to attack a pokemon that was already down, ${current_player_pokemon.name}?`,
-        `Congratulations, you won a battle against a fainted ${current_opponent_pokemon.name}. You must be so proud!`,
-        `The battle is already won, ${current_player_pokemon.name}. No need to attack a fainted pokemon!`,
-        `${current_opponent_pokemon.name} is already down for the count. Why not try battling a conscious opponent next time?`,
-        `We know you're strong, ${current_player_pokemon.name}, but did you really have to attack a fainted ${current_opponent_pokemon.name}?`,
-        `You beat a fainted pokemon. What an achievement, ${current_player_pokemon.name}!`,
-        `Great job, ${current_player_pokemon.name}. You beat a pokemon that was already defeated. How impressive!`,
-        `The battle is already won, ${current_player_pokemon.name}. You don't need to attack a fainted pokemon!`,
-        `${current_opponent_pokemon.name} is already out of the game. You win!`,
+        `It's not exactly a fair fight when you attack a fainted ${opponent.data.name}, is it?`,
+        `No need to keep attacking a fainted ${opponent.data.name}. You've already won!`,
+        `We get it, you're strong. But did you really have to attack a fainted ${opponent.data.name}?`,
+        `You beat a fainted ${opponent.data.name}. How thrilling!`,
+        `${opponent.data.name} is already defeated. Time to move on to bigger challenges!`,
+        `Did you really have to attack a pokemon that was already down, ${user.data.name}?`,
+        `Congratulations, you won a battle against a fainted ${opponent.data.name}. You must be so proud!`,
+        `The battle is already won, ${user.data.name}. No need to attack a fainted pokemon!`,
+        `${opponent.data.name} is already down for the count. Why not try battling a conscious opponent next time?`,
+        `We know you're strong, ${user.data.name}, but did you really have to attack a fainted ${opponent.data.name}?`,
+        `You beat a fainted pokemon. What an achievement, ${user.data.name}!`,
+        `Great job, ${user.data.name}. You beat a pokemon that was already defeated. How impressive!`,
+        `The battle is already won, ${user.data.name}. You don't need to attack a fainted pokemon!`,
+        `${opponent.data.name} is already out of the game. You win!`,
       ];
 
       const randomIndex = Math.floor(Math.random() * messages.length);
@@ -198,8 +208,8 @@ export const PokemonGameBattleScreen: React.FC<
     }
 
     //Check which pokemon is faster
-    const user_speed = user.pokemon_data.stats[5].base_stat;
-    const opponent_speed = opponent.pokemon_data.stats[5].base_stat;
+    const user_speed = user.stats.speed;
+    const opponent_speed = opponent.stats.speed;
 
     //If the attacker is faster, attack first
     if (user_speed > opponent_speed) {
@@ -212,7 +222,7 @@ export const PokemonGameBattleScreen: React.FC<
       );
       if (isOpponentFainted) {
         new_battle_log.push(
-          getMessageObject(`You defeated ${current_opponent_pokemon.name}!`)
+          getMessageObject(`You defeated ${opponent.data.name}!`)
         );
         setBattleLog(new_battle_log);
         return;
@@ -228,7 +238,7 @@ export const PokemonGameBattleScreen: React.FC<
       if (isUserFainted) {
         new_battle_log.push(
           getMessageObject(
-            `${current_player_pokemon.name} has fainted! You lost the battle!`
+            `${playerInstance.data.name} has fainted! You lost the battle!`
           )
         );
         setBattleLog(new_battle_log);
@@ -242,17 +252,15 @@ export const PokemonGameBattleScreen: React.FC<
   }
 
   function processUserTurn(
-    user: PokemonAllData,
-    opponent: PokemonAllData,
+    user: PokemonInstance,
+    opponent: PokemonInstance,
     user_attack_type: AttackType,
     new_battle_log: BattleLogEntry[]
   ): { isOpponentFainted: boolean } {
     new_battle_log.push(
       user_attack_type === "attack"
-        ? getMessageObject(`${current_player_pokemon.name} used an attack!`)
-        : getMessageObject(
-            `${current_player_pokemon.name} used a special attack!`
-          )
+        ? getMessageObject(`${playerInstance.data.name} used an attack!`)
+        : getMessageObject(`${playerInstance.data.name} used a special attack!`)
     );
     //Calculate user action
     const user_base_damage = calculateBaseDamage(
@@ -262,13 +270,21 @@ export const PokemonGameBattleScreen: React.FC<
       ALL_POKEMON_LEVEL
     );
     const user_random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
-    const user_type_multiplier = calculateTypeMultiplier(user, opponent); // calculate the type multiplier
+    const user_type_multiplier = calculateTypeMultiplier(
+      user.data,
+      opponent.data
+    ); // calculate the type multiplier
     const damage = Math.floor(
       user_base_damage * user_random_modifier * user_type_multiplier
     );
 
     var damage_text =
-      user.name + " attacked " + opponent.name + " for " + damage + " damage!";
+      user.data.name +
+      " attacked " +
+      opponent.data.name +
+      " for " +
+      damage +
+      " damage!";
 
     if (user_type_multiplier > 1) {
       damage_text += " It's super effective!!!";
@@ -282,24 +298,28 @@ export const PokemonGameBattleScreen: React.FC<
 
     new_battle_log.push(getMessageObject(damage_text));
 
-    if (opponentHP - damage < 1) {
-      setOpponentHP(0);
+    if (opponent.current_hp - damage < 1) {
+      setOpponentInstance(opponent.faint());
+      //setOpponentHP(0);
+      // const updated_opponent_instance: PokemonInstance = opponentInstance.faint();
+      // setOpponentInstance(updated_opponent_instance);
 
-      if (opponentPokemon.isShiny) {
+      if (opponentInstance.isShiny) {
         setShinyKillStreak(shinyKillStreak + 1);
       }
       setKillStreak(killStreak + 1);
 
       return { isOpponentFainted: true };
     } else {
-      setOpponentHP(opponentHP - damage);
+      //setOpponentHP(opponentHP - damage);
+      setOpponentInstance(opponent.takeDamage(damage));
       return { isOpponentFainted: false };
     }
   }
 
   function processOpponentTurn(
-    user: PokemonAllData,
-    opponent: PokemonAllData,
+    user: PokemonInstance,
+    opponent: PokemonInstance,
     new_battle_log: BattleLogEntry[]
   ): { isUserFainted: boolean } {
     //Get opponent action
@@ -311,13 +331,21 @@ export const PokemonGameBattleScreen: React.FC<
       ALL_POKEMON_LEVEL
     );
     const opponent_random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
-    const opponent_type_multiplier = calculateTypeMultiplier(opponent, user); // calculate the type multiplier
+    const opponent_type_multiplier = calculateTypeMultiplier(
+      opponent.data,
+      user.data
+    ); // calculate the type multiplier
     const damage = Math.floor(
       opponent_base_damage * opponent_random_modifier * opponent_type_multiplier
     );
 
     var damage_text =
-      opponent.name + " attacked " + user.name + " for " + damage + " damage!";
+      opponent.data.name +
+      " attacked " +
+      user.data.name +
+      " for " +
+      damage +
+      " damage!";
 
     if (opponent_type_multiplier > 1) {
       damage_text += " It's super effective!!!";
@@ -331,28 +359,30 @@ export const PokemonGameBattleScreen: React.FC<
 
     new_battle_log.push(getMessageObject(damage_text));
 
-    if (playerHP - damage < 1) {
-      setPlayerHP(0);
+    if (user.current_hp - damage < 1) {
+      setPlayerInstance(user.faint());
+      //setPlayerHP(0);
       setDeathCount(deathCount + 1);
       return { isUserFainted: true };
     } else {
-      setPlayerHP(playerHP - damage);
+      //setPlayerHP(playerHP - damage);
+      setPlayerInstance(user.takeDamage(damage));
       return { isUserFainted: false };
     }
   }
 
   function calculateOpponentAction(
-    opponentData: PokemonAllData,
-    defenderData: PokemonAllData
+    opponentData: PokemonInstance,
+    defenderData: PokemonInstance
   ): AttackType {
     //Check if opponent attack or special attack
-    const opponent_attack = opponentData.pokemon_data.stats[1].base_stat;
+    const opponent_attack = opponentData.data.pokemon_data.stats[1].base_stat;
     const opponent_special_attack =
-      opponentData.pokemon_data.stats[3].base_stat;
+      opponentData.data.pokemon_data.stats[3].base_stat;
 
-    const defender_defense = defenderData.pokemon_data.stats[2].base_stat;
+    const defender_defense = defenderData.data.pokemon_data.stats[2].base_stat;
     const defender_special_defense =
-      defenderData.pokemon_data.stats[4].base_stat;
+      defenderData.data.pokemon_data.stats[4].base_stat;
 
     const attackType: AttackType =
       opponent_attack / defender_defense >
@@ -364,19 +394,19 @@ export const PokemonGameBattleScreen: React.FC<
   }
 
   function calculateBaseDamage(
-    attackerData: PokemonAllData,
-    defenderData: PokemonAllData,
+    attackerData: PokemonInstance,
+    defenderData: PokemonInstance,
     attackType: AttackType,
     attackerLevel: number
   ): number {
     //calculate damage using the input parameters
-    const attacker_attack = attackerData.pokemon_data.stats[1].base_stat;
+    const attacker_attack = attackerData.data.pokemon_data.stats[1].base_stat;
     const attacker_special_attack =
-      attackerData.pokemon_data.stats[3].base_stat;
+      attackerData.data.pokemon_data.stats[3].base_stat;
 
-    const defender_defense = defenderData.pokemon_data.stats[2].base_stat;
+    const defender_defense = defenderData.data.pokemon_data.stats[2].base_stat;
     const defender_special_defense =
-      defenderData.pokemon_data.stats[4].base_stat;
+      defenderData.data.pokemon_data.stats[4].base_stat;
 
     const attack =
       attackType === "attack" ? attacker_attack : attacker_special_attack;
@@ -409,11 +439,7 @@ export const PokemonGameBattleScreen: React.FC<
         <button
           onClick={() => {
             log("click_attack");
-            processTurn(
-              current_player_pokemon,
-              current_opponent_pokemon,
-              "attack"
-            );
+            processTurn(playerInstance, opponentInstance, "attack");
           }}
           style={{ width: "40%", maxWidth: "300px" }}
         >
@@ -422,11 +448,7 @@ export const PokemonGameBattleScreen: React.FC<
         <button
           onClick={() => {
             log("click_special_attack");
-            processTurn(
-              current_player_pokemon,
-              current_opponent_pokemon,
-              "special_attack"
-            );
+            processTurn(playerInstance, opponentInstance, "special_attack");
           }}
           style={{ width: "40%", maxWidth: "300px" }}
         >

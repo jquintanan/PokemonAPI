@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { PokemonAllData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
+import PokemonInstance from "../PokemonInstance.class";
 
 interface PokemonGameSelectionScreenProps {
   pokemonData: PokemonAllData[];
@@ -86,12 +87,11 @@ export const PokemonGameSelectionScreen: React.FC<
                 Test
               </div> */}
               <PokemonFighter
-                pokemonData={pokemon}
                 minStats={minStats}
                 maxStats={maxStats}
                 setSelectedPokemon={setSelectedPokemon}
-                fighterMode="selection"
-              />
+                fighterMode="selection" 
+                pokemon_instance={new PokemonInstance(pokemon)}              />
             </div>
           );
         })}
