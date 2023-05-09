@@ -128,7 +128,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
       )}
       {fighterMode === "battle" && (
         <div className="section">
-          <h4>Lvl {pokemon_instance.level}</h4>
+          <h3>Lv. {pokemon_instance.level}</h3>
         </div>
       )}
       {fighterMode === "battle" && (

@@ -11,29 +11,43 @@ export const PokemonHPBar: React.FC<PokemonHPBarProps> = ({
 }) => {
   return (
     <div style={{ textAlign: "center" }}>
-      <h3>HP</h3>
-      <h4>{`${currentHP} / ${maxHP}`}</h4>
       <div
         style={{
-          width: "100%",
-          height: "20px",
-          backgroundColor: "gray",
-          borderRadius: "10px",
-          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          alignContent: "center",
+          backgroundColor: "#222",
+          borderRadius: "20px",
+          padding: "5px",
+          marginBottom: "5px",
         }}
       >
+        <div style={{ margin: " 0 5px", fontWeight: "bold" }}>HP</div>
         <div
           style={{
-            width: `${Math.round((currentHP / maxHP) * 100)}%`,
-            height: "100%",
-            backgroundColor: "green",
+            width: "100%",
+            height: "20px",
+            backgroundColor: "gray",
             borderRadius: "10px",
-            position: "absolute",
-            top: 0,
-            left: 0,
+            position: "relative",
+            margin: "0",
           }}
-        ></div>
+        >
+          <div
+            style={{
+              width: `${Math.round((currentHP / maxHP) * 100)}%`,
+              height: "100%",
+              backgroundColor: "green",
+              borderRadius: "10px",
+              position: "absolute",
+              top: 0,
+              left: 0,
+            }}
+          ></div>
+        </div>
       </div>
+      <h4 style={{ marginRight: "5px" }}>{`${currentHP} / ${maxHP}`}</h4>
     </div>
   );
 };

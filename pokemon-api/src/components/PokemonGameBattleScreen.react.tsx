@@ -154,7 +154,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
           }}
           style={{ width: "50%", margin: "10px" }}
         >
-          Next
+          {playerInstance.current_hp > 0 ? "Next" : "Revive + Next"}
         </button>
       </div>
     </div>
@@ -442,6 +442,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             processTurn(playerInstance, opponentInstance, "attack");
           }}
           style={{ width: "40%", maxWidth: "300px" }}
+          disabled={playerInstance.current_hp < 1}
         >
           Attack
         </button>
@@ -451,6 +452,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             processTurn(playerInstance, opponentInstance, "special_attack");
           }}
           style={{ width: "40%", maxWidth: "300px" }}
+          disabled={playerInstance.current_hp < 1}
         >
           Special Attack
         </button>

@@ -16,7 +16,7 @@ interface PokemonInstanceData {
   };
 }
 
-export default class PokemonInstance {
+export default class PokemonInstance implements PokemonInstanceData {
   data: PokemonAllData;
   isShiny: boolean;
   level: number = 1;
