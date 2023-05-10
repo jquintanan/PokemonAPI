@@ -4,6 +4,8 @@ import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
+import { PokemonGamePlayerProfileScreen } from "./PokemonGamePlayerProfileScreen.react";
+import { PokemonGameExploreScreen } from "./PokemonGameExploreScreen.react";
 
 interface PokemonGameViewProps {
   pokemonData: PokemonAllData[];
@@ -18,7 +20,11 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
   console.log("Rendering PokemonGameView");
   const place_holder_pokemon: PokemonAllData = pokemonData[0];
 
-  type Tab = "selection_screen" | "battle_screen";
+  type Tab =
+    | "selection_screen"
+    | "battle_screen"
+    | "player_profile_screen"
+    | "explore_screen";
 
   const [tab, setTab] = useState<Tab>("selection_screen");
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonAllData[]>([
@@ -134,6 +140,19 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
         />
       );
       break;
+    case "player_profile_screen":
+      screen = (
+        <PokemonGamePlayerProfileScreen selectedPokemon={selectedPokemon} />
+      );
+      break;
+    case "explore_screen":
+      screen = (
+        <PokemonGameExploreScreen
+          selectedPokemon={selectedPokemon}
+          pokemonData={pokemonData}
+        />
+      );
+      break;
     case "battle_screen":
       screen = (
         <PokemonGameBattleScreen
@@ -165,6 +184,24 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
           id="SelectionScreenTab"
         >
           Pokemon Selection
+        </button>
+        <button
+          onClick={() => setTab("player_profile_screen")}
+          className={`GameViewTab ${
+            tab === "player_profile_screen" ? "active" : ""
+          }`}
+          style={{ width: "50%" }}
+          id="PlayerProfileScreenTab"
+        >
+          Player Profile
+        </button>
+        <button
+          onClick={() => setTab("explore_screen")}
+          className={`GameViewTab ${tab === "explore_screen" ? "active" : ""}`}
+          style={{ width: "50%" }}
+          id="ExploreScreenTab"
+        >
+          Explore
         </button>
         <button
           onClick={() => setTab("battle_screen")}
