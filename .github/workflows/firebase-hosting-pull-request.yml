@@ -15,6 +15,7 @@ jobs:
           CI: false
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
+          entryPoint: ./pokemon-api
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_JOELQUINTANA_POKEMON_API }}"
           projectId: joelquintana-pokemon-api
