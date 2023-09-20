@@ -12,9 +12,7 @@ interface PokemonGameSelectionScreenProps {
   setSelectedPokemon?: ((pokemon: PokemonAllData[]) => void) | null;
 }
 
-export const PokemonGameSelectionScreen: React.FC<
-  PokemonGameSelectionScreenProps
-> = ({
+export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProps> = ({
   pokemonData,
   minStats,
   maxStats,
@@ -81,7 +79,7 @@ export const PokemonGameSelectionScreen: React.FC<
                 style={{
                   width: "200px",
                   height: "200px",
-                  backgroundColor: "white",
+                  backgroundColor:  "white",
                 }}
               >
                 Test
@@ -90,8 +88,9 @@ export const PokemonGameSelectionScreen: React.FC<
                 minStats={minStats}
                 maxStats={maxStats}
                 setSelectedPokemon={setSelectedPokemon}
-                fighterMode="selection" 
-                pokemon_instance={new PokemonInstance(pokemon)}              />
+                fighterMode="selection"
+                pokemon_instance={new PokemonInstance(pokemon)}
+              />
             </div>
           );
         })}
