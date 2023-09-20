@@ -43,7 +43,7 @@ export const AboutView: React.FC<AboutViewProps> = () => {
           entertainment purposes only and does not intend to infringe on any
           copyrights or trademarks of the Pokémon Company or Nintendo.
         </p>
-        <p>Testing...2</p>
+        <p>Testing...3</p>
       </div>
     </div>
   );
