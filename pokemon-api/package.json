@@ -10,7 +10,7 @@
     "@types/node": "^16.18.23",
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
-    "firebase": "^9.19.1",
+    "firebase": "^9.23.0",
     "ga-4-react": "^0.1.281",
     "gh-pages": "^5.0.0",
     "react": "^18.2.0",
