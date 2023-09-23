@@ -10,6 +10,7 @@ import { GamePage } from "./pages/GamePage.react";
 import { AboutPage } from "./pages/AboutPage.react";
 import { log } from "./PokemonAppLogger";
 import { PlayerProfilePage } from "./pages/PlayerProfilePage.react";
+import { MarketPage } from "./pages/MarketPage.react";
 
 function App() {
   const [pokemonData, setPokemonData] = useState<PokemonAllData[]>([]);
@@ -47,6 +48,9 @@ function App() {
                 </li>
                 <li>
                   <Link to="/playerprofile">Player Profile</Link>
+                </li>
+                <li>
+                  <Link to="/market">Market</Link>
                 </li>
                 <li>
                   <Link to="/pokedex">PokeDex</Link>
@@ -88,8 +92,12 @@ function App() {
           <Route
             path="/playerprofile"
             element={
-              <PlayerProfilePage selectedPokemon={pokemonData.slice(1, 9)} />
+              <PlayerProfilePage selectedPokemon={pokemonData.slice(0, 9)} />
             }
+          />
+          <Route
+            path="/market"
+            element={<MarketPage selectedPokemon={pokemonData.slice(0, 9)} />}
           />
           <Route path="*" element={<h1>404: Incorrect Path</h1>} />
         </Routes>
