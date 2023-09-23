@@ -1,4 +1,4 @@
-import { PokemonAllData } from "../api";
+const RESELL_DISCOUT_FACTOR = 0.5;
 
 interface InventoryItemProps {
   item: {
@@ -9,10 +9,12 @@ interface InventoryItemProps {
     cost: number;
   };
   quantity?: number;
+  inStore?: boolean;
 }
 
 export const InventoryItem: React.FC<InventoryItemProps> = ({
   item,
+  inStore = false,
   quantity,
 }) => {
   return (
@@ -30,7 +32,9 @@ export const InventoryItem: React.FC<InventoryItemProps> = ({
         <img src={item.image} alt={item.name} />
       </div>
       <div>{item.name.replace("-", " ")}</div>
-      <div>${quantity ? item.cost / 2 : item.cost}</div>
+      {inStore && (
+        <div>${item.cost * (quantity ? RESELL_DISCOUT_FACTOR : 1)}</div>
+      )}
       {quantity && <div>x{quantity}</div>}
     </div>
   );

@@ -29,6 +29,7 @@ export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
             <InventoryItem
               item={item}
               quantity={Math.floor(9 * Math.random() + 1)}
+              inStore={true}
               key={"item " + item.id}
             />
           );
@@ -44,7 +45,13 @@ export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
         {items
           .filter((i) => i.cost > 0)
           .map((item) => {
-            return <InventoryItem item={item} key={"item " + item.id} />;
+            return (
+              <InventoryItem
+                item={item}
+                inStore={true}
+                key={"item " + item.id}
+              />
+            );
           })}
       </div>
     </div>
