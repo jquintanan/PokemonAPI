@@ -1,16 +1,14 @@
 import { useState, useEffect } from "react";
-import { PokemonType } from "./PokemonType.react";
+import { PokemonType } from "../components/PokemonType.react";
 import { PokemonAllData } from "../api";
 import { Link } from "react-router-dom";
 import { log } from "../PokemonAppLogger";
 
-interface PokemonPokeDexViewProps {
+interface PokeDexPageProps {
   pokemonData: PokemonAllData[];
 }
 
-export const PokemonPokeDexView: React.FC<PokemonPokeDexViewProps> = ({
-  pokemonData,
-}) => {
+export const PokeDexPage: React.FC<PokeDexPageProps> = ({ pokemonData }) => {
   useEffect(() => {
     log("pokedex_view");
   }, []);

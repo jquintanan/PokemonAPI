@@ -3,12 +3,13 @@ import "./App.css";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-import { PokemonPokeDexView } from "./components/PokemonPokeDexView.react";
+import { PokeDexPage } from "./pages/PokeDexPage.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
 import { PokemonAllData, fetchAllData } from "./api";
-import { PokemonGameView } from "./components/PokemonGameView.react";
-import { AboutView } from "./components/AboutView.react";
+import { GamePage } from "./pages/GamePage.react";
+import { AboutPage } from "./pages/AboutPage.react";
 import { log } from "./PokemonAppLogger";
+import { PlayerProfilePage } from "./pages/PlayerProfilePage.react";
 
 function App() {
   const [pokemonData, setPokemonData] = useState<PokemonAllData[]>([]);
@@ -45,6 +46,9 @@ function App() {
                   <Link to="/">Game</Link>
                 </li>
                 <li>
+                  <Link to="/playerprofile">Player Profile</Link>
+                </li>
+                <li>
                   <Link to="/pokedex">PokeDex</Link>
                 </li>
 
@@ -60,7 +64,7 @@ function App() {
             path="/pokedex"
             element={
               pokemonData.length > 0 ? (
-                <PokemonPokeDexView pokemonData={pokemonData} />
+                <PokeDexPage pokemonData={pokemonData} />
               ) : (
                 <h1>Loading...</h1>
               )
@@ -70,16 +74,22 @@ function App() {
             path="/"
             element={
               pokemonData.length > 0 ? (
-                <PokemonGameView pokemonData={pokemonData} />
+                <GamePage pokemonData={pokemonData} />
               ) : (
                 <h1>Loading...</h1>
               )
             }
           />
-          <Route path="/about" element={<AboutView />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route
             path="/profile/:id"
             element={<PokemonProfileView data={pokemonData} />}
+          />
+          <Route
+            path="/playerprofile"
+            element={
+              <PlayerProfilePage selectedPokemon={pokemonData.slice(1, 9)} />
+            }
           />
           <Route path="*" element={<h1>404: Incorrect Path</h1>} />
         </Routes>

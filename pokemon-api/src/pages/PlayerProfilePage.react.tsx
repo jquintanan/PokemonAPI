@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { ItemData, PokemonAllData, fetchItems } from "../api";
-import { PokemonFighter } from "./PokemonFighter.react";
+import { PokemonFighter } from "../components/PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
 import { get } from "http";
 
-interface PokemonGamePlayerProfileScreenProps {
+interface PlayerProfilePageProps {
   selectedPokemon: PokemonAllData[];
 }
 
-export const PokemonGamePlayerProfileScreen: React.FC<PokemonGamePlayerProfileScreenProps> = ({
+export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
   selectedPokemon,
 }) => {
   const [items, setItems] = useState<ItemData[]>([]);

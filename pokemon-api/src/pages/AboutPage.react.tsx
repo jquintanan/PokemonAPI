@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { log } from "../PokemonAppLogger";
 
-interface AboutViewProps {}
+interface AboutPageProps {}
 
-export const AboutView: React.FC<AboutViewProps> = () => {
+export const AboutPage: React.FC<AboutPageProps> = () => {
   useEffect(() => {
     log("about_view");
   }, []);
