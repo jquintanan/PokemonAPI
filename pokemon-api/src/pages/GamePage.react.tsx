@@ -1,30 +1,24 @@
 import { useEffect, useState } from "react";
 import { PokemonAllData } from "../api";
-import { PokemonGameSelectionScreen } from "./PokemonGameSelectionScreen.react";
-import { PokemonGameBattleScreen } from "./PokemonGameBattleScreen.react";
+import { PokemonGameSelectionScreen } from "../components/PokemonGameSelectionScreen.react";
+import { PokemonGameBattleScreen } from "../components/PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
-import { PokemonGamePlayerProfileScreen } from "./PokemonGamePlayerProfileScreen.react";
-import { PokemonGameExploreScreen } from "./PokemonGameExploreScreen.react";
+import { PlayerProfilePage } from "./PlayerProfilePage.react";
+import { PokemonGameExploreScreen } from "../components/PokemonGameExploreScreen.react";
 
-interface PokemonGameViewProps {
+interface GamePageProps {
   pokemonData: PokemonAllData[];
 }
 
-export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
-  pokemonData,
-}) => {
+export const GamePage: React.FC<GamePageProps> = ({ pokemonData }) => {
   useEffect(() => {
     log("game_view");
   }, []);
   console.log("Rendering PokemonGameView");
   const place_holder_pokemon: PokemonAllData = pokemonData[0];
 
-  type Tab =
-    | "selection_screen"
-    | "battle_screen"
-    | "player_profile_screen"
-    | "explore_screen";
+  type Tab = "selection_screen" | "battle_screen" | "explore_screen";
 
   const [tab, setTab] = useState<Tab>("selection_screen");
   const [selectedPokemon, setSelectedPokemon] = useState<PokemonAllData[]>([
@@ -140,11 +134,6 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
         />
       );
       break;
-    case "player_profile_screen":
-      screen = (
-        <PokemonGamePlayerProfileScreen selectedPokemon={selectedPokemon} />
-      );
-      break;
     case "explore_screen":
       screen = (
         <PokemonGameExploreScreen
@@ -184,16 +173,6 @@ export const PokemonGameView: React.FC<PokemonGameViewProps> = ({
           id="SelectionScreenTab"
         >
           Pokemon Selection
-        </button>
-        <button
-          onClick={() => setTab("player_profile_screen")}
-          className={`GameViewTab ${
-            tab === "player_profile_screen" ? "active" : ""
-          }`}
-          style={{ width: "50%" }}
-          id="PlayerProfileScreenTab"
-        >
-          Player Profile
         </button>
         <button
           onClick={() => setTab("explore_screen")}
