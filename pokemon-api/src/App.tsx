@@ -10,7 +10,7 @@ import { GamePage } from "./pages/GamePage.react";
 import { AboutPage } from "./pages/AboutPage.react";
 import { log } from "./PokemonAppLogger";
 import { PlayerProfilePage } from "./pages/PlayerProfilePage.react";
-import { MarketPage } from "./pages/StorePage.react";
+import { MarketPage } from "./pages/MarketPage.react";
 
 function App() {
   const [pokemonData, setPokemonData] = useState<PokemonAllData[]>([]);

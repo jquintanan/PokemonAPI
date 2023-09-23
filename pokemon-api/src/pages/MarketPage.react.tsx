@@ -4,6 +4,7 @@ import { PokemonFighter } from "../components/PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
 import { get } from "http";
+import { InventoryItem } from "../components/InventoryItem.react";
 
 interface MarketPageProps {
   selectedPokemon: PokemonAllData[];
@@ -25,21 +26,11 @@ export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
       <div style={{ display: "flex", flexWrap: "wrap" }}>
         {items.slice(0, 4).map((item) => {
           return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                margin: "10px",
-              }}
+            <InventoryItem
+              item={item}
+              quantity={Math.floor(9 * Math.random() + 1)}
               key={"item " + item.id}
-            >
-              <div>
-                <img src={item.image} alt={item.name} />
-              </div>
-              <div>{item.name}</div>
-              <div>x{Math.floor(9 * Math.random() + 1)}</div>
-            </div>
+            />
           );
         })}
       </div>
@@ -50,25 +41,11 @@ export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
     <div className="section">
       <h3>Shop</h3>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {items.map((item) => {
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                margin: "10px",
-              }}
-              key={"item " + item.id}
-            >
-              <div>
-                <img src={item.image} alt={item.name} />
-              </div>
-              <div>{item.name}</div>
-              <div>Price: ${item.cost}</div>
-            </div>
-          );
-        })}
+        {items
+          .filter((i) => i.cost > 0)
+          .map((item) => {
+            return <InventoryItem item={item} key={"item " + item.id} />;
+          })}
       </div>
     </div>
   );
