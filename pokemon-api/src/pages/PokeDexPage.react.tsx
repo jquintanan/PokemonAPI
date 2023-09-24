@@ -3,12 +3,13 @@ import { PokemonType } from "../components/PokemonType.react";
 import { PokemonAllData } from "../api";
 import { Link } from "react-router-dom";
 import { log } from "../PokemonAppLogger";
+import { useSelector } from "react-redux";
+import { selectAllPokemonData } from "../state/allPokemonDataSlice";
 
-interface PokeDexPageProps {
-  pokemonData: PokemonAllData[];
-}
+interface PokeDexPageProps {}
 
-export const PokeDexPage: React.FC<PokeDexPageProps> = ({ pokemonData }) => {
+export const PokeDexPage: React.FC<PokeDexPageProps> = ({}) => {
+  let pokemonData = useSelector(selectAllPokemonData).allPokemonData;
   useEffect(() => {
     log("pokedex_view");
   }, []);
