@@ -1,9 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import profileInfoReducer from "./profileInfoSlice";
+import playerDataReducer from "./playerDataSlice";
+import allPokemonDataReducer from "./allPokemonDataSlice";
+import allItemDataReducer from "./allItemDataSlice";
 
 export const store = configureStore({
   reducer: {
-    profileInfo: profileInfoReducer,
+    playerData: playerDataReducer,
+    allPokemonData: allPokemonDataReducer,
+    allItemData: allItemDataReducer,
   },
 });
 
