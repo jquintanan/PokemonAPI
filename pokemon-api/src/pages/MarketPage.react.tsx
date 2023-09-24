@@ -5,12 +5,15 @@ import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
 import { get } from "http";
 import { InventoryItem } from "../components/InventoryItem.react";
+import { useSelector } from "react-redux";
+import { RootState } from "../state/store";
 
 interface MarketPageProps {
   selectedPokemon: PokemonAllData[];
 }
 
 export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
+  const profileInfo = useSelector((state: RootState) => state.profileInfo);
   const [items, setItems] = useState<ItemData[]>([]);
   useEffect(() => {
     log("player_profile_screen");
@@ -60,6 +63,10 @@ export const MarketPage: React.FC<MarketPageProps> = ({ selectedPokemon }) => {
   return (
     <div style={{ display: "flex", flexDirection: "column", margin: "10px" }}>
       <h2>Market</h2>
+      <div>
+        <h3>Current Money</h3>
+        <div>${profileInfo.money}</div>
+      </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
         {current_items}
         {shop}

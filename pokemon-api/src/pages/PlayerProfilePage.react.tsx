@@ -5,6 +5,17 @@ import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
 import { get } from "http";
 import { InventoryItem } from "../components/InventoryItem.react";
+import { useSelector, useDispatch } from "react-redux";
+
+import type { RootState } from "../state/store";
+
+//import from profileInfoSlice
+import {
+  setName,
+  setMoney,
+  increaseMoney,
+  selectProfileInfo,
+} from "../state/profileInfoSlice";
 
 interface PlayerProfilePageProps {
   selectedPokemon: PokemonAllData[];
@@ -13,6 +24,9 @@ interface PlayerProfilePageProps {
 export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
   selectedPokemon,
 }) => {
+  const dispatch = useDispatch();
+  const profileInfo = useSelector(selectProfileInfo);
+
   const [items, setItems] = useState<ItemData[]>([]);
   useEffect(() => {
     log("player_profile_screen");
@@ -38,10 +52,16 @@ export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
           </div>
           <div>
             <h4>Name</h4>
-            Joel Quintana
+            {profileInfo.name}
           </div>
           <div>
-            <h4>Money</h4>${99999999999}
+            <h4>Money</h4>${profileInfo.money}
+            <button onClick={() => dispatch(increaseMoney(100))}>
+              Add $100
+            </button>
+            <button onClick={() => dispatch(increaseMoney(-100))}>
+              Remove $100
+            </button>
           </div>
           <div>
             <h4>Record</h4>
