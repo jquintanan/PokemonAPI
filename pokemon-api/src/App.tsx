@@ -5,20 +5,34 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import { PokeDexPage } from "./pages/PokeDexPage.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
-import { PokemonAllData, fetchAllData } from "./api";
+import { PokemonAllData, fetchAllData, fetchItems } from "./api";
 import { GamePage } from "./pages/GamePage.react";
 import { AboutPage } from "./pages/AboutPage.react";
 import { log } from "./PokemonAppLogger";
 import { PlayerProfilePage } from "./pages/PlayerProfilePage.react";
 import { MarketPage } from "./pages/MarketPage.react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "./state/store";
+import {
+  selectAllPokemonData,
+  setAllPokemonData,
+} from "./state/allPokemonDataSlice";
+import { setAllItemData } from "./state/allItemDataSlice";
 
 function App() {
-  const [pokemonData, setPokemonData] = useState<PokemonAllData[]>([]);
+  const dispatch = useDispatch();
+  const pokemonData = useSelector(selectAllPokemonData).allPokemonData;
 
   useEffect(() => {
     log("site_root");
+    //get all pokemon data
     fetchAllData().then((response) => {
-      setPokemonData(response);
+      dispatch(setAllPokemonData(response));
+    });
+
+    //get all item data
+    fetchItems().then((items) => {
+      dispatch(setAllItemData(items));
     });
   }, []);
 
@@ -67,11 +81,7 @@ function App() {
           <Route
             path="/pokedex"
             element={
-              pokemonData.length > 0 ? (
-                <PokeDexPage pokemonData={pokemonData} />
-              ) : (
-                <h1>Loading...</h1>
-              )
+              pokemonData.length > 0 ? <PokeDexPage /> : <h1>Loading...</h1>
             }
           />
           <Route
@@ -95,10 +105,7 @@ function App() {
               <PlayerProfilePage selectedPokemon={pokemonData.slice(0, 9)} />
             }
           />
-          <Route
-            path="/market"
-            element={<MarketPage selectedPokemon={pokemonData.slice(0, 9)} />}
-          />
+          <Route path="/market" element={<MarketPage />} />
           <Route path="*" element={<h1>404: Incorrect Path</h1>} />
         </Routes>
       </div>

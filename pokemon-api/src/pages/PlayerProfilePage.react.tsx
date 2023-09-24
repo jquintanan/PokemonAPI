@@ -14,8 +14,8 @@ import {
   setName,
   setMoney,
   increaseMoney,
-  selectProfileInfo,
-} from "../state/profileInfoSlice";
+  selecPlayerData,
+} from "../state/playerDataSlice";
 
 interface PlayerProfilePageProps {
   selectedPokemon: PokemonAllData[];
@@ -25,15 +25,7 @@ export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
   selectedPokemon,
 }) => {
   const dispatch = useDispatch();
-  const profileInfo = useSelector(selectProfileInfo);
-
-  const [items, setItems] = useState<ItemData[]>([]);
-  useEffect(() => {
-    log("player_profile_screen");
-    fetchItems().then((items) => {
-      setItems(items);
-    });
-  }, []);
+  const playerData = useSelector(selecPlayerData);
 
   console.log("Rendering PokemonGameView-PlayerProfileScreen");
 
@@ -43,45 +35,29 @@ export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
       <div style={{ display: "flex", flexDirection: "row" }}>
         <div style={{ width: "100px", textAlign: "center" }}>
           <div>
-            <img
-              src="pokemon-trainer.jpg"
-              alt="Joel Quintana"
-              width={"100px"}
-              height={"100px"}
-            />
+            <img src="pokemon-trainer.jpg" width={"100px"} height={"100px"} />
           </div>
-          <div>
-            <h4>Name</h4>
-            {profileInfo.name}
-          </div>
-          <div>
-            <h4>Money</h4>${profileInfo.money}
-            <button onClick={() => dispatch(increaseMoney(100))}>
-              Add $100
-            </button>
-            <button onClick={() => dispatch(increaseMoney(-100))}>
-              Remove $100
-            </button>
-          </div>
-          <div>
-            <h4>Record</h4>
-            Wins
-            <br />
-            Losses
-            <br />
-            Run away
-          </div>
+        </div>
+        <div>
+          <div>Name: {playerData.name}</div>
+          <div>Money: ${playerData.money}</div>
         </div>
       </div>
     </div>
   );
 
+  const owned_pokemon = playerData.ownedPokemon;
+
   const current_team = selectedPokemon.length > 0 &&
     selectedPokemon[0] !== undefined && (
       <div className="section">
         <h3>My Pokemon</h3>
+        {owned_pokemon.length === 0 && (
+          <div>You don't have any pokemon yet!</div>
+        )}
         <div style={{ display: "flex", flexDirection: "row" }}>
-          {selectedPokemon.map((pokemon) => {
+          {playerData.ownedPokemon.map((pokemon_instance) => {
+            const pokemon = pokemon_instance.data;
             return (
               <div
                 style={{ width: "100px", textAlign: "center" }}
@@ -101,16 +77,18 @@ export const PlayerProfilePage: React.FC<PlayerProfilePageProps> = ({
       </div>
     );
 
+  const owned_items = playerData.ownedItems;
   const current_items = (
     <div className="section">
       <h3>My Items</h3>
+      {owned_items.length === 0 && <div>You don't have any items yet!</div>}
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {items.slice(0, 4).map((item) => {
+        {playerData.ownedItems.map(({ item, amount }) => {
           return (
             <InventoryItem
               item={item}
               key={"item " + item.id}
-              quantity={Math.floor(9 * Math.random() + 1)}
+              quantity={amount}
             />
           );
         })}
