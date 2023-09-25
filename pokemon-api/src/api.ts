@@ -337,93 +337,105 @@ export function fetchItemData(url: string): Promise<ItemData> {
 }
 
 //Calculate min and max stats
-export function getStatsUpperAndLowerBounds(): {
-  maxStats: { [key: string]: number };
-  minStats: { [key: string]: number };
-} {
-  const pokemonData = ALL_POKEMON_ALL_DATA;
-  //find the highest value for each stat among all pokemon and store it in maxStats
-  const maxStats: { [key: string]: number } = {
-    hp: 0,
-    attack: 0,
-    defense: 0,
-    "special-attack": 0,
-    "special-defense": 0,
-    speed: 0,
+export interface PokemonStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  special_attack: number;
+  special_defense: number;
+  speed: number;
+}
+
+export function getBaseStats(pokemon: PokemonAllData): PokemonStats {
+  const base_stats_from_api = pokemon.pokemon_data.stats;
+  const base_stats: PokemonStats = {
+    hp: base_stats_from_api[0].base_stat,
+    attack: base_stats_from_api[1].base_stat,
+    defense: base_stats_from_api[2].base_stat,
+    special_attack: base_stats_from_api[3].base_stat,
+    special_defense: base_stats_from_api[4].base_stat,
+    speed: base_stats_from_api[5].base_stat,
   };
 
-  const minStats: { [key: string]: number } = {
-    hp: 999999,
-    attack: 999999,
-    defense: 999999,
-    "special-attack": 999999,
-    "special-defense": 999999,
-    speed: 999999,
+  return base_stats;
+}
+
+interface MinMaxStats {
+  min: PokemonStats;
+  max: PokemonStats;
+}
+
+let MIN_MAX_BASE_STATS: MinMaxStats | null = null;
+export function getStatsUpperAndLowerBounds(): MinMaxStats {
+  if (MIN_MAX_BASE_STATS) {
+    return MIN_MAX_BASE_STATS;
+  }
+  const pokemonData = ALL_POKEMON_ALL_DATA;
+  //find the highest value for each stat among all pokemon and store it in maxStats
+  const minMaxStats: MinMaxStats = {
+    min: {
+      hp: 9999,
+      attack: 9999,
+      defense: 9999,
+      special_attack: 9999,
+      special_defense: 9999,
+      speed: 9999,
+    },
+    max: {
+      hp: 0,
+      attack: 0,
+      defense: 0,
+      special_attack: 0,
+      special_defense: 0,
+      speed: 0,
+    },
   };
 
   pokemonData.forEach((pokemon) => {
-    const stats_for_level_1 = PokemonInstance.getStatsFromPokemonDataAndLevel(
-      pokemon,
-      1
+    const base_stats = getBaseStats(pokemon);
+
+    minMaxStats.max.hp = Math.max(base_stats.hp, minMaxStats.max.hp);
+    minMaxStats.max.attack = Math.max(
+      base_stats.attack,
+      minMaxStats.max.attack
     );
+    minMaxStats.max.defense = Math.max(
+      base_stats.defense,
+      minMaxStats.max.defense
+    );
+    minMaxStats.max.special_attack = Math.max(
+      base_stats.special_attack,
+      minMaxStats.max.special_attack
+    );
+    minMaxStats.max.special_defense = Math.max(
+      base_stats.special_defense,
+      minMaxStats.max.special_defense
+    );
+    minMaxStats.max.speed = Math.max(base_stats.speed, minMaxStats.max.speed);
 
-    maxStats.hp =
-      stats_for_level_1.max_hp > maxStats.hp
-        ? stats_for_level_1.max_hp
-        : maxStats.hp;
-    minStats.hp =
-      stats_for_level_1.max_hp < minStats.hp
-        ? stats_for_level_1.max_hp
-        : minStats.hp;
-
-    maxStats.attack =
-      stats_for_level_1.attack > maxStats.attack
-        ? stats_for_level_1.attack
-        : maxStats.attack;
-    minStats.attack =
-      stats_for_level_1.attack < minStats.attack
-        ? stats_for_level_1.attack
-        : minStats.attack;
-
-    maxStats.defense =
-      stats_for_level_1.defense > maxStats.defense
-        ? stats_for_level_1.defense
-        : maxStats.defense;
-    minStats.defense =
-      stats_for_level_1.defense < minStats.defense
-        ? stats_for_level_1.defense
-        : minStats.defense;
-
-    maxStats["special-attack"] =
-      stats_for_level_1.special_attack > maxStats["special-attack"]
-        ? stats_for_level_1.special_attack
-        : maxStats["special-attack"];
-    minStats["special-attack"] =
-      stats_for_level_1.special_attack < minStats["special-attack"]
-        ? stats_for_level_1.special_attack
-        : minStats["special-attack"];
-
-    maxStats["special-defense"] =
-      stats_for_level_1.special_defense > maxStats["special-defense"]
-        ? stats_for_level_1.special_defense
-        : maxStats["special-defense"];
-    minStats["special-defense"] =
-      stats_for_level_1.special_defense < minStats["special-defense"]
-        ? stats_for_level_1.special_defense
-        : minStats["special-defense"];
-
-    maxStats.speed =
-      stats_for_level_1.speed > maxStats.speed
-        ? stats_for_level_1.speed
-        : maxStats.speed;
-    minStats.speed =
-      stats_for_level_1.speed < minStats.speed
-        ? stats_for_level_1.speed
-        : minStats.speed;
+    minMaxStats.min.hp = Math.min(base_stats.hp, minMaxStats.min.hp);
+    minMaxStats.min.attack = Math.min(
+      base_stats.attack,
+      minMaxStats.min.attack
+    );
+    minMaxStats.min.defense = Math.min(
+      base_stats.defense,
+      minMaxStats.min.defense
+    );
+    minMaxStats.min.special_attack = Math.min(
+      base_stats.special_attack,
+      minMaxStats.min.special_attack
+    );
+    minMaxStats.min.special_defense = Math.min(
+      base_stats.special_defense,
+      minMaxStats.min.special_defense
+    );
+    minMaxStats.min.speed = Math.min(base_stats.speed, minMaxStats.min.speed);
   });
 
   // console.log(maxStats);
   // console.log(minStats);
 
-  return { maxStats, minStats };
+  MIN_MAX_BASE_STATS = minMaxStats;
+  return minMaxStats;
 }

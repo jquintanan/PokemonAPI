@@ -21,7 +21,7 @@ interface BattleLogEntry {
   message: string;
 }
 
-const ALL_POKEMON_LEVEL = 1;
+const ALL_POKEMON_LEVEL = 5;
 
 export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = ({
   pokemonData,
@@ -238,14 +238,6 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
         );
         setBattleLog(new_battle_log);
 
-        //Add money to player
-        dispatch(increaseMoney(100));
-
-        //Add exp to pokemon
-        const exp_gain =
-          (opponent.data.pokemon_data.base_experience * opponent.level) / 7;
-        dispatch(increaseExpForPokemon({ pokemon: user, exp: 100 }));
-
         return;
       }
       processOpponentTurn(user, opponent, new_battle_log);
@@ -321,9 +313,16 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
 
     if (opponent.current_hp - damage < 1) {
       setOpponentInstance(opponent.faint());
-      //setOpponentHP(0);
-      // const updated_opponent_instance: PokemonInstance = opponentInstance.faint();
-      // setOpponentInstance(updated_opponent_instance);
+
+      //Add money to player
+      dispatch(increaseMoney(100));
+
+      //Add exp to pokemon
+      const exp_gain = Math.floor(
+        (opponent.data.pokemon_data.base_experience * opponent.level) / 7
+      );
+      console.log("defeated! exp gain: " + exp_gain);
+      dispatch(increaseExpForPokemon({ pokemon: user, exp: exp_gain }));
 
       if (opponentInstance.isShiny) {
         setShinyKillStreak(shinyKillStreak + 1);

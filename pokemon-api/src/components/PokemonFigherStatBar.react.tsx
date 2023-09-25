@@ -1,25 +1,24 @@
 interface PokemonFighterStatBarProps {
-    name:string;
-    base: number,
-    min:number;
-    max:number;
-  }
+  name: string;
+  base: number;
+  min: number;
+  max: number;
+}
 
-  
-
-export const PokemonFighterStatBar: React.FC<PokemonFighterStatBarProps> = ({name,base,min,max}): JSX.Element => {
-    // Calculate the percentage of the maximum stat value
-  const getStatPercentage = (statName: string, baseStat: number): number => {
-    return Math.round(
-      ((baseStat - min + 1) /
-        (max - min + 1)) *
-        100
-    );
+export const PokemonFighterStatBar: React.FC<PokemonFighterStatBarProps> = ({
+  name,
+  base,
+  min,
+  max,
+}): JSX.Element => {
+  // Calculate the percentage of the maximum stat value
+  const getStatPercentage = (): number => {
+    return Math.round(((base - min + 1) / (max - min + 1)) * 100);
   };
 
   // Generate a style object for the stat bar based on its percentage value
-  const getStatBarStyle = (statName: string, baseStat: number) => {
-    const percentage = getStatPercentage(statName, baseStat);
+  const getStatBarStyle = () => {
+    const percentage = getStatPercentage();
     let color: string;
     if (percentage < 10) {
       color = "#DDD"; // gray
@@ -38,9 +37,9 @@ export const PokemonFighterStatBar: React.FC<PokemonFighterStatBarProps> = ({nam
       width: `${percentage}%`,
       backgroundColor: color,
     };
-  };  
+  };
 
-return (
+  return (
     <div
       style={{
         width: "100%",
@@ -83,10 +82,7 @@ return (
           paddingLeft: "10px",
         }}
       >
-        <div
-          className="stat-bar"
-          style={getStatBarStyle(name, base)}
-        ></div>
+        <div className="stat-bar" style={getStatBarStyle()}></div>
       </div>
     </div>
   );

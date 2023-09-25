@@ -66,6 +66,14 @@ export const playerDataSlice = createSlice({
     addPokemon: (state, action: PayloadAction<PokemonInstance>) => {
       state.ownedPokemon.push(action.payload);
     },
+    removePokemon: (state, action: PayloadAction<PokemonInstance>) => {
+      state.ownedPokemon = state.ownedPokemon.filter(
+        (p) => p.id !== action.payload.id
+      );
+
+      if (state.selectedPokemon?.id === action.payload.id)
+        state.selectedPokemon = state.ownedPokemon[0] ?? null;
+    },
     setSelectedPokemon: (state, action: PayloadAction<PokemonInstance>) => {
       state.selectedPokemon = action.payload;
     },
@@ -90,6 +98,7 @@ export const {
   addItem,
   removeItem,
   addPokemon,
+  removePokemon,
   setSelectedPokemon,
   increaseExpForPokemon,
 } = playerDataSlice.actions;
