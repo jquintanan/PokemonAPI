@@ -115,7 +115,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                       selectPokemon(pokemon_instance);
                     }}
                   >
-                    Select in Children
+                    Select
                   </button>
                 </PokemonFighter>
               </div>
@@ -131,6 +131,8 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
       1, //bulbasaur
       4, //charmander
       7, //squirtle
+      25, //pikachu
+      133, //eevee
     ].includes(p.id)
   );
   const selection_index = (
@@ -153,7 +155,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
               style={{
                 //width: "100%",
                 // minWidth: "250px",
-                // maxWidth: "400px",
+                maxWidth: "300px",
                 flexGrow: 1,
                 padding: "15px",
               }}
