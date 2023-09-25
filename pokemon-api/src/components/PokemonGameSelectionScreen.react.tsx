@@ -6,6 +6,7 @@ import PokemonInstance from "../PokemonInstance.class";
 import {
   selecPlayerData,
   addPokemon,
+  removePokemon,
   setSelectedPokemon,
 } from "../state/playerDataSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -117,14 +118,31 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                   showCurrentStats={true}
                   showIVs={true}
                 >
-                  <button
-                    onClick={() => {
-                      console.log("selecting pokemon");
-                      selectPokemon(pokemon_instance);
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-evenly",
+                      alignItems: "center",
                     }}
                   >
-                    Select
-                  </button>
+                    <button
+                      onClick={() => {
+                        console.log("selecting pokemon");
+                        selectPokemon(pokemon_instance);
+                      }}
+                    >
+                      Select
+                    </button>
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        dispatch(removePokemon(pokemon_instance));
+                      }}
+                    >
+                      🗑️
+                    </div>
+                  </div>
                 </PokemonFighter>
               </div>
             );
