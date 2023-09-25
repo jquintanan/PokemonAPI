@@ -7,15 +7,8 @@ import { get } from "http";
 import { InventoryItem } from "../components/InventoryItem.react";
 import { useSelector, useDispatch } from "react-redux";
 
-import type { RootState } from "../state/store";
-
 //import from profileInfoSlice
-import {
-  setName,
-  setMoney,
-  increaseMoney,
-  selecPlayerData,
-} from "../state/playerDataSlice";
+import { selecPlayerData } from "../state/playerDataSlice";
 
 interface PlayerProfilePageProps {
   selectedPokemon: PokemonAllData[];

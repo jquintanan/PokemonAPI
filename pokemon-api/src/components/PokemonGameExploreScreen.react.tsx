@@ -7,12 +7,10 @@ import { get } from "http";
 
 interface PokemonGameExploreScreenProps {
   pokemonData: PokemonAllData[];
-  selectedPokemon: PokemonAllData[];
 }
 
 export const PokemonGameExploreScreen: React.FC<PokemonGameExploreScreenProps> = ({
   pokemonData,
-  selectedPokemon,
 }) => {
   const [habitatData, setHabitatData] = useState<HabitatData[]>([]);
   useEffect(() => {
@@ -20,28 +18,6 @@ export const PokemonGameExploreScreen: React.FC<PokemonGameExploreScreenProps> =
     setHabitatData(getHabitatsData(pokemonData));
   }, []);
   console.log("Rendering PokemonGameView-ExploreScreen");
-  const current_team = selectedPokemon.length > 0 &&
-    selectedPokemon[0] !== undefined && (
-      <div className="section">
-        <h3>Team</h3>
-        {selectedPokemon.map((pokemon) => {
-          return (
-            <div
-              style={{ width: "100px", textAlign: "center" }}
-              key={"current_Selection " + pokemon.id}
-            >
-              <div>
-                <img
-                  src={pokemon.pokemon_data.sprites.front_default}
-                  alt={pokemon.name}
-                />
-              </div>
-              <div>{pokemon.name}</div>
-            </div>
-          );
-        })}
-      </div>
-    );
 
   const regions = (
     <div className="section">

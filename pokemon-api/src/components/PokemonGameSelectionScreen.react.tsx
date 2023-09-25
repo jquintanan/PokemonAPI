@@ -3,51 +3,139 @@ import { PokemonAllData } from "../api";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
+import {
+  selecPlayerData,
+  addPokemon,
+  setSelectedPokemon,
+} from "../state/playerDataSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 interface PokemonGameSelectionScreenProps {
   pokemonData: PokemonAllData[];
-  minStats: { [key: string]: number };
-  maxStats: { [key: string]: number };
-  selectedPokemon: PokemonAllData[];
-  setSelectedPokemon?: ((pokemon: PokemonAllData[]) => void) | null;
 }
 
 export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProps> = ({
   pokemonData,
-  minStats,
-  maxStats,
-  selectedPokemon,
-  setSelectedPokemon,
 }) => {
+  const dispatch = useDispatch();
+  const playerData = useSelector(selecPlayerData);
+  const selectedPokemon = playerData.selectedPokemon;
+
+  const buyPokemon = (pokemon: PokemonAllData) => {
+    console.log("buying pokemon");
+    //Add pokemon to player's ownedPokemon
+    const pokemon_instance = new PokemonInstance(pokemon, undefined, 50);
+    dispatch(addPokemon(pokemon_instance));
+
+    selectPokemon(pokemon_instance);
+  };
+
+  const selectPokemon = (pokemon: PokemonInstance) => {
+    console.log("selecting pokemon");
+    dispatch(setSelectedPokemon(pokemon));
+  };
+
   useEffect(() => {
     log("selection_screen");
   }, []);
   console.log("Rendering PokemonGameView-SelectionScreen");
-  const current_selection = selectedPokemon.length > 0 &&
-    selectedPokemon[0] !== undefined && (
-      <div style={{ margin: "10px 0px" }}>
-        Current selection:
-        {selectedPokemon.map((pokemon) => {
-          return (
-            <div
-              style={{ width: "100px", textAlign: "center" }}
-              key={"current_Selection " + pokemon.id}
-            >
-              <div>
-                <img
-                  src={pokemon.pokemon_data.sprites.front_default}
-                  alt={pokemon.name}
-                />
-              </div>
-              <div>{pokemon.name}</div>
-            </div>
-          );
-        })}
-      </div>
-    );
 
-  var selection_index = (
+  const current_selection = (
+    <div className="section">
+      <h3>Current Selection</h3>
+      {!selectedPokemon ? (
+        <div>You don't have any pokemon yet!</div>
+      ) : (
+        <div
+          style={{ width: "100px", textAlign: "center" }}
+          key={"current_Selection " + selectedPokemon.id}
+        >
+          <div>
+            <img
+              src={
+                selectedPokemon.isShiny
+                  ? selectedPokemon.data.pokemon_data.sprites.front_shiny
+                  : selectedPokemon.data.pokemon_data.sprites.front_default
+              }
+              alt={selectedPokemon.data.pokemon_data.name}
+            />
+          </div>
+          <div>{selectedPokemon.data.pokemon_data.name}</div>
+        </div>
+      )}
+    </div>
+  );
+
+  const owned_pokemon = playerData.ownedPokemon;
+  const my_pokemon_section = (
+    <div className="section">
+      <h3>My Pokemon</h3>
+      {owned_pokemon.length === 0 ? (
+        <div>You don't have any pokemon yet!</div>
+      ) : (
+        <div
+          style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+        >
+          {playerData.ownedPokemon.map((pokemon_instance) => {
+            const pokemon = pokemon_instance.data;
+            const style_selected: React.CSSProperties = {
+              flexGrow: 1,
+              margin: "-5px",
+              padding: "15px",
+              border: "5px solid red",
+              maxWidth: "300px",
+            };
+            const style_not_selected: React.CSSProperties = {
+              flexGrow: 1,
+              margin: "0px",
+              padding: "15px",
+              border: "none",
+              maxWidth: "300px",
+            };
+            return (
+              <div
+                key={"index_selection " + pokemon_instance.id}
+                className="border_for_selected"
+                style={
+                  selectedPokemon && selectedPokemon?.id === pokemon_instance.id
+                    ? style_selected
+                    : style_not_selected
+                }
+              >
+                <PokemonFighter
+                  fighterMode="selection"
+                  pokemon_instance={pokemon_instance}
+                  showLevel={true}
+                  showType={true}
+                  showHPBar={true}
+                >
+                  <button
+                    onClick={() => {
+                      console.log("selecting pokemon");
+                      selectPokemon(pokemon_instance);
+                    }}
+                  >
+                    Select in Children
+                  </button>
+                </PokemonFighter>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
+  const available_for_purchase = pokemonData.filter((p) =>
+    [
+      1, //bulbasaur
+      4, //charmander
+      7, //squirtle
+    ].includes(p.id)
+  );
+  const selection_index = (
     <div>
+      <h3>Buy Pokemon</h3>
       <div
         id="pokemon_menu"
         style={{
@@ -57,7 +145,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
           flexWrap: "wrap",
         }}
       >
-        {pokemonData.map((pokemon) => {
+        {available_for_purchase.map((pokemon) => {
           return (
             <div
               key={"index_selection " + pokemon.id}
@@ -67,12 +155,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                 // minWidth: "250px",
                 // maxWidth: "400px",
                 flexGrow: 1,
-                margin: selectedPokemon.includes(pokemon) ? "-5px" : "0px",
                 padding: "15px",
-                //show which pokemon is selected
-                border: selectedPokemon.includes(pokemon)
-                  ? "5px solid red"
-                  : "none",
               }}
             >
               {/* <div
@@ -85,12 +168,13 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                 Test
               </div> */}
               <PokemonFighter
-                minStats={minStats}
-                maxStats={maxStats}
-                setSelectedPokemon={setSelectedPokemon}
                 fighterMode="selection"
-                pokemon_instance={new PokemonInstance(pokemon)}
-              />
+                pokemon_instance={new PokemonInstance(pokemon, false)}
+                showBaseStats={true}
+                showType={true}
+              >
+                <button onClick={() => buyPokemon(pokemon)}>Buy</button>
+              </PokemonFighter>
             </div>
           );
         })}
@@ -100,10 +184,17 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "column", margin: "20px 0px" }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        margin: "20px 0px",
+        justifyContent: "space-between",
+        gap: "20px",
+      }}
     >
       <h2>Select your pokemon:</h2>
       {current_selection}
+      {my_pokemon_section}
       {selection_index}
     </div>
   );

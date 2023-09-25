@@ -1,5 +1,5 @@
 import React from "react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData, getStatsUpperAndLowerBounds } from "../api";
 import { PokemonType } from "./PokemonType.react";
 import { PokemonHPBar } from "./PokemonHPBar.react";
 import PokemonInstance from "../PokemonInstance.class";
@@ -7,21 +7,28 @@ import { PokemonFighterStatBar } from "./PokemonFigherStatBar.react";
 
 interface PokemonFighterProps {
   pokemon_instance: PokemonInstance;
-  maxStats: { [key: string]: number };
-  minStats: { [key: string]: number };
-  setSelectedPokemon?: ((pokemon: PokemonAllData[]) => void) | null;
   fighterMode: FighterMode;
+  children?: React.ReactNode;
+  showBaseStats?: boolean;
+  showCurrentStats?: boolean;
+  showHPBar?: boolean;
+  showLevel?: boolean;
+  showType?: boolean;
 }
 
 type FighterMode = "selection" | "battle";
 
 export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   pokemon_instance,
-  maxStats,
-  minStats,
-  setSelectedPokemon,
   fighterMode,
+  children,
+  showBaseStats = false,
+  showCurrentStats = false,
+  showHPBar = false,
+  showLevel = false,
+  showType = false,
 }) => {
+  const { maxStats, minStats } = getStatsUpperAndLowerBounds();
   const base_stats = PokemonInstance.getStatsFromPokemonDataAndLevel(
     pokemon_instance.data,
     1
@@ -49,23 +56,25 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         #{pokemon_instance.data.id} {pokemon_instance.data.name}
         {pokemon_instance.isShiny ? " 💎" : ""}
       </h3>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          padding: "0",
-          margin: "0",
-          height: "20px",
-        }}
-      >
-        {pokemon_instance.data.pokemon_data.types.map((type) => {
-          return (
-            <div className="PokemonType" key={type.type.name}>
-              <PokemonType name={type.type.name} />
-            </div>
-          );
-        })}
-      </div>
+      {showType && (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            padding: "0",
+            margin: "0",
+            height: "20px",
+          }}
+        >
+          {pokemon_instance.data.pokemon_data.types.map((type) => {
+            return (
+              <div className="PokemonType" key={type.type.name}>
+                <PokemonType name={type.type.name} />
+              </div>
+            );
+          })}
+        </div>
+      )}
       <img
         src={
           pokemon_instance.isShiny
@@ -74,7 +83,8 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         }
         alt="pokemon"
       />
-      {fighterMode === "selection" && (
+
+      {showBaseStats && (
         <div className="section">
           <h4>Stats</h4>
           <div style={{ marginTop: "10px" }}>
@@ -117,21 +127,12 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           </div>
         </div>
       )}
-      {fighterMode === "selection" && (
-        <div className="section">
-          {setSelectedPokemon && (
-            <button onClick={() => setSelectedPokemon([pokemon_instance.data])}>
-              Select
-            </button>
-          )}
-        </div>
-      )}
-      {fighterMode === "battle" && (
+      {showLevel && (
         <div className="section">
           <h3>Lv. {pokemon_instance.level}</h3>
         </div>
       )}
-      {fighterMode === "battle" && (
+      {showHPBar && (
         <div
           id="hp_bar_container"
           style={{ width: "90%", padding: "0", margin: "0" }}
@@ -142,6 +143,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
           />
         </div>
       )}
+      {children && <div className="section">{children}</div>}
     </div>
   );
 };

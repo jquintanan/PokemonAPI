@@ -4,12 +4,11 @@ import { PokemonFighter } from "./PokemonFighter.react";
 import { calculateTypeMultiplier } from "./PokemonType.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
+import { useDispatch, useSelector } from "react-redux";
+import { selecPlayerData, setSelectedPokemon } from "../state/playerDataSlice";
 
 interface PokemonGameBattleScreenProps {
   pokemonData: PokemonAllData[];
-  minStats: { [key: string]: number };
-  maxStats: { [key: string]: number };
-  selectedPokemon: PokemonAllData[];
 }
 
 interface BattleLogEntry {
@@ -17,14 +16,15 @@ interface BattleLogEntry {
   message: string;
 }
 
-const ALL_POKEMON_LEVEL = 100;
+const ALL_POKEMON_LEVEL = 1;
 
 export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = ({
   pokemonData,
-  minStats,
-  maxStats,
-  selectedPokemon,
 }) => {
+  const dispatch = useDispatch();
+  const playerData = useSelector(selecPlayerData);
+  const selectedPokemon = playerData.selectedPokemon;
+
   useEffect(() => {
     log("battle_screen");
   }, []);
@@ -33,9 +33,6 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
   const [battleLog, setBattleLog] = useState<BattleLogEntry[]>([]);
   const [opponentInstance, setOpponentInstance] = useState<PokemonInstance>(
     new PokemonInstance(pokemonData[0], false, ALL_POKEMON_LEVEL)
-  );
-  const [playerInstance, setPlayerInstance] = useState<PokemonInstance>(
-    new PokemonInstance(selectedPokemon[0], false, ALL_POKEMON_LEVEL)
   );
 
   const [killStreak, setKillStreak] = useState<number>(0);
@@ -76,6 +73,12 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     // eslint-disable-next-line
   }, []);
 
+  if (!selectedPokemon) {
+    return <div>You don't have any pokemon yet!</div>;
+  }
+
+  const playerInstance: PokemonInstance = selectedPokemon;
+
   const kill_streak_counter_component = (
     <div>
       <h4>Wins 🏆: {killStreak}</h4>
@@ -109,10 +112,11 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
 
         <div className="section">
           <PokemonFighter
-            minStats={minStats}
-            maxStats={maxStats}
             fighterMode="battle"
             pokemon_instance={playerInstance}
+            showHPBar={true}
+            showLevel={true}
+            showType={true}
           />
         </div>
       </div>
@@ -123,10 +127,11 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
         <h3>Opponent</h3>
         <div className="section">
           <PokemonFighter
-            minStats={minStats}
-            maxStats={maxStats}
             fighterMode="battle"
             pokemon_instance={opponentInstance}
+            showHPBar={true}
+            showLevel={true}
+            showType={true}
           />
         </div>
         <button
@@ -140,7 +145,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             }
 
             if (playerInstance.current_hp <= 0) {
-              setPlayerInstance(playerInstance.resetHp());
+              dispatch(setSelectedPokemon(playerInstance.resetHp()));
             }
 
             initializeBattleLog();
@@ -360,13 +365,13 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     new_battle_log.push(getMessageObject(damage_text));
 
     if (user.current_hp - damage < 1) {
-      setPlayerInstance(user.faint());
+      dispatch(setSelectedPokemon(user.faint()));
       //setPlayerHP(0);
       setDeathCount(deathCount + 1);
       return { isUserFainted: true };
     } else {
       //setPlayerHP(playerHP - damage);
-      setPlayerInstance(user.takeDamage(damage));
+      dispatch(setSelectedPokemon(user.takeDamage(damage)));
       return { isUserFainted: false };
     }
   }
@@ -455,6 +460,9 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
           disabled={playerInstance.current_hp < 1}
         >
           Special Attack
+        </button>
+        <button style={{ width: "40%", maxWidth: "300px" }} disabled={true}>
+          Items
         </button>
       </div>
     </div>
