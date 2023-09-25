@@ -4,7 +4,7 @@ import { RootState } from "../state/store";
 //import from profileInfoSlice, add item, and remove item
 import { increaseMoney, addItem, removeItem } from "../state/playerDataSlice";
 import { useDispatch } from "react-redux";
-import { ItemData } from "../api";
+import { ItemData, ALL_ITEMS_DATA } from "../api";
 
 interface MarketPageProps {}
 
@@ -62,26 +62,24 @@ export const MarketPage: React.FC<MarketPageProps> = ({}) => {
     <div className="section">
       <h3>Shop</h3>
       <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {all_items
-          .filter((i) => i.cost > 0)
-          .map((item) => {
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  padding: "20px",
-                }}
-              >
-                <InventoryItem
-                  item={item}
-                  inStore={true}
-                  key={"item " + item.id}
-                />
-                <button onClick={() => buyItem(item, 1)}>Buy</button>
-              </div>
-            );
-          })}
+        {ALL_ITEMS_DATA.filter((i) => i.cost > 0).map((item) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: "20px",
+              }}
+            >
+              <InventoryItem
+                item={item}
+                inStore={true}
+                key={"item " + item.id}
+              />
+              <button onClick={() => buyItem(item, 1)}>Buy</button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

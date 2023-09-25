@@ -1,4 +1,4 @@
-import { PokemonAllData, PokemonStats, getBaseStats } from "./api";
+import { PokemonAllData, PokemonStats } from "./api";
 
 interface PokemonInstanceData {
   data: PokemonAllData;
@@ -63,16 +63,33 @@ export default class PokemonInstance implements PokemonInstanceData {
     };
   }
 
-  getExperienceGivenWhenDefeated(): number {
-    return (this.data.pokemon_data.base_experience * this.level) / 7;
+  getExperienceYieldWhenDefeated(): number {
+    return Math.floor(
+      (this.data.pokemon_data.base_experience * this.level) / 7
+    );
+  }
+
+  getTotalExp(): number {
+    return this.exp;
+  }
+
+  private static getExpNeededForLevel(level: number): number {
+    return level ** 3;
+  }
+
+  getTotalExpNeededForNextLevel(): number {
+    return PokemonInstance.getExpNeededForLevel(this.level + 1);
   }
 
   getCurrentLevelExp(): number {
-    return this.exp - (this.level ^ 3);
+    return this.exp - PokemonInstance.getExpNeededForLevel(this.level);
   }
 
-  getExperienceNeededToLevelUp(): number {
-    return ((this.level + 1) ^ 3) - this.exp;
+  getCurrentLevelExpGoal(): number {
+    return (
+      PokemonInstance.getExpNeededForLevel(this.level + 1) -
+      PokemonInstance.getExpNeededForLevel(this.level)
+    );
   }
 
   resetHp(): PokemonInstance {
@@ -131,7 +148,7 @@ export default class PokemonInstance implements PokemonInstanceData {
     level: number,
     ivs: PokemonStats
   ): PokemonStats {
-    const base_stats = getBaseStats(pokemon);
+    const base_stats = pokemon.base_stats;
     const hp = Math.floor(
       ((2 * base_stats.hp + ivs.hp) * level) / 100 + level + 10
     );

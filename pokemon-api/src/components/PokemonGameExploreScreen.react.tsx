@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-import { HabitatData, PokemonAllData, getHabitatsData } from "../api";
-import { PokemonFighter } from "./PokemonFighter.react";
+import { useEffect } from "react";
+import { PokemonAllData, HABITATS } from "../api";
+
 import { log } from "../PokemonAppLogger";
-import PokemonInstance from "../PokemonInstance.class";
-import { get } from "http";
 
 interface PokemonGameExploreScreenProps {
   pokemonData: PokemonAllData[];
@@ -12,17 +10,15 @@ interface PokemonGameExploreScreenProps {
 export const PokemonGameExploreScreen: React.FC<PokemonGameExploreScreenProps> = ({
   pokemonData,
 }) => {
-  const [habitatData, setHabitatData] = useState<HabitatData[]>([]);
   useEffect(() => {
     log("explore_screen");
-    setHabitatData(getHabitatsData(pokemonData));
   }, []);
   console.log("Rendering PokemonGameView-ExploreScreen");
 
   const regions = (
     <div className="section">
       <div>
-        {habitatData.map((habitat) => {
+        {HABITATS.map((habitat) => {
           return (
             <div
               style={{

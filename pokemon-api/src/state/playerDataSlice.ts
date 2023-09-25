@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { ItemData, PokemonAllData } from "../api";
-import { Item } from "firebase/analytics";
+import { ItemData } from "../api";
 import PokemonInstance from "../PokemonInstance.class";
 
 interface PlayerDataState {
