@@ -18,6 +18,7 @@ interface PokemonFighterProps {
   showHPBar?: boolean;
   showLevel?: boolean;
   showType?: boolean;
+  showIVs?: boolean;
 }
 
 type FighterMode = "selection" | "battle";
@@ -28,6 +29,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   children,
   showBaseStats = false,
   showCurrentStats = false,
+  showIVs = false,
   showHPBar = false,
   showLevel = false,
   showType = false,
@@ -107,6 +109,25 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         </div>
       )}
 
+      {showIVs && (
+        <div className="section">
+          <h4>IVs</h4>
+          <div style={{ marginTop: "10px" }}>
+            HP: {pokemon_instance.ivs.hp}
+            <br />
+            Attack: {pokemon_instance.ivs.attack}
+            <br />
+            Defense: {pokemon_instance.ivs.defense}
+            <br />
+            Sp. Attack: {pokemon_instance.ivs.special_attack}
+            <br />
+            Sp. Defense: {pokemon_instance.ivs.special_defense}
+            <br />
+            Speed: {pokemon_instance.ivs.speed}
+          </div>
+        </div>
+      )}
+
       {showLevel && (
         <div className="section">
           <h3>Lv. {pokemon_instance.level}</h3>
@@ -119,7 +140,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         >
           <PokemonHPBar
             currentHP={pokemon_instance.current_hp ?? 0}
-            maxHP={pokemon_instance.stats.max_hp ?? 0}
+            maxHP={pokemon_instance.stats.hp ?? 0}
           />
         </div>
       )}

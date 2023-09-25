@@ -115,6 +115,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                   showType={true}
                   showHPBar={true}
                   showCurrentStats={true}
+                  showIVs={true}
                 >
                   <button
                     onClick={() => {

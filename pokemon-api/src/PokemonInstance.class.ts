@@ -1,4 +1,4 @@
-import { PokemonAllData } from "./api";
+import { PokemonAllData, PokemonStats, getBaseStats } from "./api";
 
 interface PokemonInstanceData {
   data: PokemonAllData;
@@ -6,14 +6,8 @@ interface PokemonInstanceData {
   level: number;
   exp: number;
   current_hp: number;
-  stats: {
-    max_hp: number;
-    attack: number;
-    defense: number;
-    special_attack: number;
-    special_defense: number;
-    speed: number;
-  };
+  stats: PokemonStats;
+  ivs: PokemonStats;
 }
 
 export default class PokemonInstance implements PokemonInstanceData {
@@ -23,26 +17,29 @@ export default class PokemonInstance implements PokemonInstanceData {
   level: number = 1;
   exp: number = 0;
   current_hp: number = 1;
-  stats: {
-    max_hp: number;
-    attack: number;
-    defense: number;
-    special_attack: number;
-    special_defense: number;
-    speed: number;
-  } = {
-    max_hp: 1,
+  stats: PokemonStats = {
+    hp: 1,
     attack: 1,
     defense: 1,
     special_attack: 1,
     special_defense: 1,
     speed: 1,
   };
+  ivs: PokemonStats = {
+    hp: 0,
+    attack: 0,
+    defense: 0,
+    special_attack: 0,
+    special_defense: 0,
+    speed: 0,
+  };
 
   constructor(data: PokemonAllData, is_shiny?: boolean, level?: number) {
     this.id = this.gemerateID();
     this.data = data;
     this.isShiny = is_shiny ?? Math.random() < 0.1;
+    this.ivs = this.generateIVs();
+
     this.setLevel(level ?? 1);
   }
 
@@ -53,6 +50,17 @@ export default class PokemonInstance implements PokemonInstanceData {
         .toString()
         .replace(".", "")
     );
+  }
+
+  generateIVs(): PokemonStats {
+    return {
+      hp: Math.floor(Math.random() * 32),
+      attack: Math.floor(Math.random() * 32),
+      defense: Math.floor(Math.random() * 32),
+      special_attack: Math.floor(Math.random() * 32),
+      special_defense: Math.floor(Math.random() * 32),
+      speed: Math.floor(Math.random() * 32),
+    };
   }
 
   getExperienceGivenWhenDefeated(): number {
@@ -69,7 +77,7 @@ export default class PokemonInstance implements PokemonInstanceData {
 
   resetHp(): PokemonInstance {
     console.log("Resetting HP");
-    this.current_hp = this.stats.max_hp;
+    this.current_hp = this.stats.hp;
     return this;
   }
 
@@ -98,11 +106,12 @@ export default class PokemonInstance implements PokemonInstanceData {
     //Calculate level up from exp gained
     const new_level = Math.floor(total_exp ** (1 / 3));
     this.level = new_level > this.level ? new_level : this.level;
-    this.stats = PokemonInstance.getStatsFromPokemonDataAndLevel(
+    this.stats = PokemonInstance.getStatsFromPokemonDataAndLevelAndIVs(
       this.data,
-      this.level
+      this.level,
+      this.ivs
     );
-    this.current_hp = this.stats.max_hp;
+    this.current_hp = this.stats.hp;
   }
 
   increaseExp(exp: number): void {
@@ -117,41 +126,39 @@ export default class PokemonInstance implements PokemonInstanceData {
     this.setLevel(this.level + 1);
   }
 
-  static getStatsFromPokemonDataAndLevel(
+  static getStatsFromPokemonDataAndLevelAndIVs(
     pokemon: PokemonAllData,
-    level: number
-  ): {
-    max_hp: number;
-    attack: number;
-    defense: number;
-    special_attack: number;
-    special_defense: number;
-    speed: number;
-  } {
-    const max_hp = Math.floor(
-      (2.0 * pokemon.pokemon_data.stats[0].base_stat * level) / 100.0 +
-        level +
-        10.0
+    level: number,
+    ivs: PokemonStats
+  ): PokemonStats {
+    const base_stats = getBaseStats(pokemon);
+    const hp = Math.floor(
+      ((2 * base_stats.hp + ivs.hp) * level) / 100 + level + 10
     );
 
-    const attack = Math.floor(
-      (2 * pokemon.pokemon_data.stats[1].base_stat * level) / 100 + 5
+    const calculateStat = (
+      base_stat: number,
+      iv: number,
+      level: number
+    ): number => {
+      return Math.floor(((2 * base_stats.attack + iv) * level) / 100 + 5);
+    };
+    const attack = calculateStat(base_stats.attack, ivs.attack, level);
+    const defense = calculateStat(base_stats.defense, ivs.defense, level);
+    const special_attack = calculateStat(
+      base_stats.special_attack,
+      ivs.special_attack,
+      level
     );
-    const defense = Math.floor(
-      (2 * pokemon.pokemon_data.stats[2].base_stat * level) / 100 + 5
+    const special_defense = calculateStat(
+      base_stats.special_defense,
+      ivs.special_defense,
+      level
     );
-    const special_attack = Math.floor(
-      (2 * pokemon.pokemon_data.stats[3].base_stat * level) / 100 + 5
-    );
-    const special_defense = Math.floor(
-      (2 * pokemon.pokemon_data.stats[4].base_stat * level) / 100 + 5
-    );
-    const speed = Math.floor(
-      (2 * pokemon.pokemon_data.stats[5].base_stat * level) / 100 + 5
-    );
+    const speed = calculateStat(base_stats.speed, ivs.speed, level);
 
     return {
-      max_hp: max_hp,
+      hp: hp,
       attack: attack,
       defense: defense,
       special_attack: special_attack,
