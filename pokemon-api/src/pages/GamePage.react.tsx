@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { PokemonAllData, getStatsUpperAndLowerBounds } from "../api";
+import { PokemonAllData } from "../api";
 import { PokemonGameSelectionScreen } from "../components/PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "../components/PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";
-import PokemonInstance from "../PokemonInstance.class";
-import { PlayerProfilePage } from "./PlayerProfilePage.react";
 import { PokemonGameExploreScreen } from "../components/PokemonGameExploreScreen.react";
 
 interface GamePageProps {
@@ -20,9 +18,6 @@ export const GamePage: React.FC<GamePageProps> = ({ pokemonData }) => {
   type Tab = "selection_screen" | "battle_screen" | "explore_screen";
 
   const [tab, setTab] = useState<Tab>("selection_screen");
-  const [selectedPokemonInstances, setSelectedPokemonInstances] = useState<
-    PokemonInstance[]
-  >([]);
 
   var screen = <p>Loading selection...</p>;
   switch (tab) {

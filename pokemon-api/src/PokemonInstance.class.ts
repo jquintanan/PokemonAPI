@@ -128,28 +128,30 @@ export default class PokemonInstance implements PokemonInstanceData {
     special_defense: number;
     speed: number;
   } {
-    //level = 5;
-    const base_hp = Math.floor(
-      pokemon.pokemon_data.stats[0].base_stat * (level / 100) + level + 10
+    const max_hp = Math.floor(
+      (2.0 * pokemon.pokemon_data.stats[0].base_stat * level) / 100.0 +
+        level +
+        10.0
     );
+
     const attack = Math.floor(
-      pokemon.pokemon_data.stats[1].base_stat * 2 * (level / 100) + 5
+      (2 * pokemon.pokemon_data.stats[1].base_stat * level) / 100 + 5
     );
     const defense = Math.floor(
-      pokemon.pokemon_data.stats[2].base_stat * 2 * (level / 100) + 5
+      (2 * pokemon.pokemon_data.stats[2].base_stat * level) / 100 + 5
     );
     const special_attack = Math.floor(
-      pokemon.pokemon_data.stats[3].base_stat * 2 * (level / 100) + 5
+      (2 * pokemon.pokemon_data.stats[3].base_stat * level) / 100 + 5
     );
     const special_defense = Math.floor(
-      pokemon.pokemon_data.stats[4].base_stat * 2 * (level / 100) + 5
+      (2 * pokemon.pokemon_data.stats[4].base_stat * level) / 100 + 5
     );
     const speed = Math.floor(
-      pokemon.pokemon_data.stats[5].base_stat * 2 * (level / 100) + 5
+      (2 * pokemon.pokemon_data.stats[5].base_stat * level) / 100 + 5
     );
 
     return {
-      max_hp: base_hp,
+      max_hp: max_hp,
       attack: attack,
       defense: defense,
       special_attack: special_attack,
