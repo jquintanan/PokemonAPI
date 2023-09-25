@@ -29,6 +29,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
   const dispatch = useDispatch();
   const playerData = useSelector(selecPlayerData);
   const selectedPokemon = playerData.selectedPokemon;
+  const playerItems = playerData.ownedItems;
 
   useEffect(() => {
     log("battle_screen");
@@ -121,8 +122,8 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             pokemon_instance={playerInstance}
             showHPBar={true}
             showLevel={true}
+            showExp={true}
             showType={true}
-            showCurrentStats={true}
           />
         </div>
       </div>
@@ -138,7 +139,6 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             showHPBar={true}
             showLevel={true}
             showType={true}
-            showCurrentStats={true}
           />
         </div>
         <button
@@ -318,9 +318,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
       dispatch(increaseMoney(100));
 
       //Add exp to pokemon
-      const exp_gain = Math.floor(
-        (opponent.data.pokemon_data.base_experience * opponent.level) / 7
-      );
+      const exp_gain = opponent.getExperienceYieldWhenDefeated();
       console.log("defeated! exp gain: " + exp_gain);
       dispatch(increaseExpForPokemon({ pokemon: user, exp: exp_gain }));
 
@@ -472,10 +470,37 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
         >
           Special Attack
         </button>
-        <button style={{ width: "40%", maxWidth: "300px" }} disabled={true}>
-          Items
-        </button>
       </div>
+    </div>
+  );
+
+  const items_section = (
+    <div className="section">
+      <h3 style={{ textAlign: "center" }}>Items</h3>
+      {playerItems.length < 0 ? (
+        <div>You don't have any items yet!</div>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          {playerItems.map((item) => (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <img src={item.item.image} alt={item.item.name} />
+              <div>{item.item.name}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 
@@ -499,6 +524,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
       {kill_streak_counter_component}
       {pokemon_selected_for_battle}
       {player_actions}
+      {items_section}
       {battle_log}
     </div>
   );

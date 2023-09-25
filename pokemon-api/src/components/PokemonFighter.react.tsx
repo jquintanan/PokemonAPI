@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  getStatsUpperAndLowerBounds as getBaseStatsUpperAndLowerBounds,
-  PokemonStats,
-  getBaseStats,
-} from "../api";
+import { getBaseStatsRanges, PokemonStats } from "../api";
 import { PokemonType } from "./PokemonType.react";
 import { PokemonHPBar } from "./PokemonHPBar.react";
 import PokemonInstance from "../PokemonInstance.class";
@@ -11,12 +7,13 @@ import { PokemonFighterStatBar } from "./PokemonFigherStatBar.react";
 
 interface PokemonFighterProps {
   pokemon_instance: PokemonInstance;
-  fighterMode: FighterMode;
+  fighterMode?: FighterMode;
   children?: React.ReactNode;
   showBaseStats?: boolean;
   showCurrentStats?: boolean;
   showHPBar?: boolean;
   showLevel?: boolean;
+  showExp?: boolean;
   showType?: boolean;
   showIVs?: boolean;
 }
@@ -29,14 +26,14 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   children,
   showBaseStats = false,
   showCurrentStats = false,
-  showIVs = false,
   showHPBar = false,
   showLevel = false,
+  showExp = false,
   showType = false,
+  showIVs = false,
 }) => {
-  const minMaxStats = getBaseStatsUpperAndLowerBounds();
-  const base_stats: PokemonStats = getBaseStats(pokemon_instance.data);
-
+  const minMaxStats = getBaseStatsRanges();
+  const base_stats: PokemonStats = pokemon_instance.data.base_stats;
   return (
     <div
       className="Pokemon"
@@ -89,6 +86,28 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         }
         alt="pokemon"
       />
+      {showLevel && (
+        <div className="section">
+          <h3>Lv. {pokemon_instance.level}</h3>
+          {showExp && (
+            <div>
+              EXP {pokemon_instance.getCurrentLevelExp()} /{" "}
+              {pokemon_instance.getCurrentLevelExpGoal()}
+            </div>
+          )}
+        </div>
+      )}
+      {showHPBar && (
+        <div
+          id="hp_bar_container"
+          style={{ width: "90%", padding: "0", margin: "0" }}
+        >
+          <PokemonHPBar
+            currentHP={pokemon_instance.current_hp ?? 0}
+            maxHP={pokemon_instance.stats.hp ?? 0}
+          />
+        </div>
+      )}
 
       {showCurrentStats && (
         <div className="section">
@@ -125,23 +144,6 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
             <br />
             Speed: {pokemon_instance.ivs.speed}
           </div>
-        </div>
-      )}
-
-      {showLevel && (
-        <div className="section">
-          <h3>Lv. {pokemon_instance.level}</h3>
-        </div>
-      )}
-      {showHPBar && (
-        <div
-          id="hp_bar_container"
-          style={{ width: "90%", padding: "0", margin: "0" }}
-        >
-          <PokemonHPBar
-            currentHP={pokemon_instance.current_hp ?? 0}
-            maxHP={pokemon_instance.stats.hp ?? 0}
-          />
         </div>
       )}
 

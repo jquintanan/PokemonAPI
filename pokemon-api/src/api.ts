@@ -1,15 +1,14 @@
-import PokemonInstance from "./PokemonInstance.class";
+/*
+TODO: Separate logic supposed to be run on server vs client
+*/
 
-const API_URL = "https://pokeapi.co/api/v2/pokemon?limit=151";
-//this is a test
-//write an interface to hold all the battle data
-export interface BattleData {
-  pokemon1: PokemonInstance;
-  pokemon2: PokemonInstance;
-  turn: number;
-  winner: number;
-  battleLog: string[];
-}
+const NUMBER_OF_POKEMON = 151;
+const NUMBER_OF_ITEMS = 50;
+
+const POKEMON_LIST_API_URL =
+  "https://pokeapi.co/api/v2/pokemon?limit=" + NUMBER_OF_POKEMON;
+const ITEM_LIST_API_URL =
+  "https://pokeapi.co/api/v2/item?limit=" + NUMBER_OF_ITEMS;
 
 export interface PokemonListElement {
   name: string;
@@ -52,7 +51,7 @@ export interface PokemonData {
     };
   }[];
   abilities: {
-    //TODO: Implement abilities
+    //TODO: Implement abilities?
     ability: {
       name: string;
     };
@@ -87,10 +86,23 @@ export interface PokemonAllData {
   dex_entry: string;
   pokemon_data: PokemonData;
   species_data: SpeciesData;
+  base_stats: PokemonStats;
+}
+
+interface AllLoadedData {
+  all_pokemon_data: PokemonAllData[];
+  all_item_data: ItemData[];
+}
+
+export async function loadAllData(): Promise<AllLoadedData> {
+  const all_pokemon_data = await fetchAllData();
+  const all_item_data = await fetchItems();
+
+  return { all_pokemon_data, all_item_data };
 }
 
 export function fetchPokemonList(): Promise<PokemonList> {
-  return fetch(API_URL)
+  return fetch(POKEMON_LIST_API_URL)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -116,6 +128,7 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
     pokemon_list.results.map(async (pokemon) => {
       const pokemon_data = await fetchPokemonDataURL(pokemon.url);
       const species_data = await fetchSpeciesDataURL(pokemon_data.species.url);
+      const base_stats = getBaseStatsFromPokemonData(pokemon_data);
 
       const id: number = pokemon_data.id;
       const dex_entry =
@@ -132,18 +145,19 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
         dex_entry: dex_entry,
         pokemon_data,
         species_data,
+        base_stats,
       };
     })
   );
 
-  fillHabitatsData(all_data);
+  updateHabitatsData(all_data);
 
   ALL_POKEMON_ALL_DATA = all_data;
 
   return all_data;
 }
 
-export function fetchPokemonDataURL(url: string): Promise<PokemonData> {
+function fetchPokemonDataURL(url: string): Promise<PokemonData> {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -158,7 +172,7 @@ export function fetchPokemonDataURL(url: string): Promise<PokemonData> {
     });
 }
 
-export function fetchSpeciesDataURL(url: string): Promise<SpeciesData> {
+function fetchSpeciesDataURL(url: string): Promise<SpeciesData> {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -256,24 +270,16 @@ export const HABITATS: HabitatData[] = [
   },
 ];
 
-function fillHabitatsData(pokemonData: PokemonAllData[]) {
+function updateHabitatsData(pokemonData: PokemonAllData[]) {
   pokemonData.forEach((pokemon) => {
     const habitat = HABITATS.find(
-      (habitat) => habitat.name === pokemon.species_data.habitat.name
+      (h) => h.name === pokemon.species_data.habitat.name
     );
 
     if (habitat) {
       habitat.pokemon.push(pokemon);
     }
   });
-}
-
-export function getHabitatsData(pokemonData: PokemonAllData[]): HabitatData[] {
-  if (HABITATS[0].pokemon.length === 0) {
-    fillHabitatsData(pokemonData);
-  }
-
-  return HABITATS;
 }
 
 export interface ItemData {
@@ -286,29 +292,35 @@ export interface ItemData {
   effect: string;
 }
 
-export function fetchItems(): Promise<ItemData[]> {
-  return fetch("https://pokeapi.co/api/v2/item?limit=50")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+export let ALL_ITEMS_DATA: ItemData[] = [];
+export async function fetchItems(): Promise<ItemData[]> {
+  if (ALL_ITEMS_DATA.length > 0) {
+    return ALL_ITEMS_DATA;
+  }
 
-      return response.json();
-    })
-    .then((data) => {
-      const items = data.results.map((item: any) => {
-        return fetchItemData(item.url);
-      });
+  const all_item_urls: {
+    results: { name: string; url: string }[];
+  } = await fetch(ITEM_LIST_API_URL).then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
 
-      return Promise.all(items);
+    return response.json();
+  });
+
+  const all_item_data = await Promise.all(
+    all_item_urls.results.map(async (item) => {
+      const item_data = await fetchItemData(item.url);
+      return item_data;
     })
-    .catch((error) => {
-      console.error("There was a problem with the network request:", error);
-      throw error;
-    });
+  );
+
+  ALL_ITEMS_DATA = all_item_data;
+
+  return all_item_data;
 }
 
-export function fetchItemData(url: string): Promise<ItemData> {
+function fetchItemData(url: string): Promise<ItemData> {
   return fetch(url)
     .then((response) => {
       if (!response.ok) {
@@ -346,15 +358,15 @@ export interface PokemonStats {
   speed: number;
 }
 
-export function getBaseStats(pokemon: PokemonAllData): PokemonStats {
-  const base_stats_from_api = pokemon.pokemon_data.stats;
+function getBaseStatsFromPokemonData(pokemon_data: PokemonData): PokemonStats {
+  const { stats } = pokemon_data;
   const base_stats: PokemonStats = {
-    hp: base_stats_from_api[0].base_stat,
-    attack: base_stats_from_api[1].base_stat,
-    defense: base_stats_from_api[2].base_stat,
-    special_attack: base_stats_from_api[3].base_stat,
-    special_defense: base_stats_from_api[4].base_stat,
-    speed: base_stats_from_api[5].base_stat,
+    hp: stats[0].base_stat,
+    attack: stats[1].base_stat,
+    defense: stats[2].base_stat,
+    special_attack: stats[3].base_stat,
+    special_defense: stats[4].base_stat,
+    speed: stats[5].base_stat,
   };
 
   return base_stats;
@@ -366,75 +378,49 @@ interface MinMaxStats {
 }
 
 let MIN_MAX_BASE_STATS: MinMaxStats | null = null;
-export function getStatsUpperAndLowerBounds(): MinMaxStats {
+export function getBaseStatsRanges(): MinMaxStats {
   if (MIN_MAX_BASE_STATS) {
     return MIN_MAX_BASE_STATS;
   }
   const pokemonData = ALL_POKEMON_ALL_DATA;
-  //find the highest value for each stat among all pokemon and store it in maxStats
+  const all_stats = pokemonData.reduce(
+    (acc, { base_stats }) => {
+      acc.hp.push(base_stats.hp);
+      acc.attack.push(base_stats.attack);
+      acc.defense.push(base_stats.defense);
+      acc.special_attack.push(base_stats.special_attack);
+      acc.special_defense.push(base_stats.special_defense);
+      acc.speed.push(base_stats.speed);
+      return acc;
+    },
+    {
+      hp: [] as number[],
+      attack: [] as number[],
+      defense: [] as number[],
+      special_attack: [] as number[],
+      special_defense: [] as number[],
+      speed: [] as number[],
+    }
+  );
+
   const minMaxStats: MinMaxStats = {
     min: {
-      hp: 9999,
-      attack: 9999,
-      defense: 9999,
-      special_attack: 9999,
-      special_defense: 9999,
-      speed: 9999,
+      hp: Math.min(...all_stats.hp),
+      attack: Math.min(...all_stats.attack),
+      defense: Math.min(...all_stats.defense),
+      special_attack: Math.min(...all_stats.special_attack),
+      special_defense: Math.min(...all_stats.special_defense),
+      speed: Math.min(...all_stats.speed),
     },
     max: {
-      hp: 0,
-      attack: 0,
-      defense: 0,
-      special_attack: 0,
-      special_defense: 0,
-      speed: 0,
+      hp: Math.max(...all_stats.hp),
+      attack: Math.max(...all_stats.attack),
+      defense: Math.max(...all_stats.defense),
+      special_attack: Math.max(...all_stats.special_attack),
+      special_defense: Math.max(...all_stats.special_defense),
+      speed: Math.max(...all_stats.speed),
     },
   };
-
-  pokemonData.forEach((pokemon) => {
-    const base_stats = getBaseStats(pokemon);
-
-    minMaxStats.max.hp = Math.max(base_stats.hp, minMaxStats.max.hp);
-    minMaxStats.max.attack = Math.max(
-      base_stats.attack,
-      minMaxStats.max.attack
-    );
-    minMaxStats.max.defense = Math.max(
-      base_stats.defense,
-      minMaxStats.max.defense
-    );
-    minMaxStats.max.special_attack = Math.max(
-      base_stats.special_attack,
-      minMaxStats.max.special_attack
-    );
-    minMaxStats.max.special_defense = Math.max(
-      base_stats.special_defense,
-      minMaxStats.max.special_defense
-    );
-    minMaxStats.max.speed = Math.max(base_stats.speed, minMaxStats.max.speed);
-
-    minMaxStats.min.hp = Math.min(base_stats.hp, minMaxStats.min.hp);
-    minMaxStats.min.attack = Math.min(
-      base_stats.attack,
-      minMaxStats.min.attack
-    );
-    minMaxStats.min.defense = Math.min(
-      base_stats.defense,
-      minMaxStats.min.defense
-    );
-    minMaxStats.min.special_attack = Math.min(
-      base_stats.special_attack,
-      minMaxStats.min.special_attack
-    );
-    minMaxStats.min.special_defense = Math.min(
-      base_stats.special_defense,
-      minMaxStats.min.special_defense
-    );
-    minMaxStats.min.speed = Math.min(base_stats.speed, minMaxStats.min.speed);
-  });
-
-  // console.log(maxStats);
-  // console.log(minStats);
 
   MIN_MAX_BASE_STATS = minMaxStats;
   return minMaxStats;
