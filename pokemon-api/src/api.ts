@@ -104,7 +104,12 @@ export function fetchPokemonList(): Promise<PokemonList> {
     });
 }
 
+export let ALL_POKEMON_ALL_DATA: PokemonAllData[] = [];
 export async function fetchAllData(): Promise<PokemonAllData[]> {
+  if (ALL_POKEMON_ALL_DATA.length > 0) {
+    return ALL_POKEMON_ALL_DATA;
+  }
+
   const pokemon_list = await fetchPokemonList();
 
   const all_data: PokemonAllData[] = await Promise.all(
@@ -132,6 +137,8 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
   );
 
   fillHabitatsData(all_data);
+
+  ALL_POKEMON_ALL_DATA = all_data;
 
   return all_data;
 }
@@ -327,4 +334,96 @@ export function fetchItemData(url: string): Promise<ItemData> {
       console.error("There was a problem with the network request:", error);
       throw error;
     });
+}
+
+//Calculate min and max stats
+export function getStatsUpperAndLowerBounds(): {
+  maxStats: { [key: string]: number };
+  minStats: { [key: string]: number };
+} {
+  const pokemonData = ALL_POKEMON_ALL_DATA;
+  //find the highest value for each stat among all pokemon and store it in maxStats
+  const maxStats: { [key: string]: number } = {
+    hp: 0,
+    attack: 0,
+    defense: 0,
+    "special-attack": 0,
+    "special-defense": 0,
+    speed: 0,
+  };
+
+  const minStats: { [key: string]: number } = {
+    hp: 999999,
+    attack: 999999,
+    defense: 999999,
+    "special-attack": 999999,
+    "special-defense": 999999,
+    speed: 999999,
+  };
+
+  pokemonData.forEach((pokemon) => {
+    const stats_for_level_1 = PokemonInstance.getStatsFromPokemonDataAndLevel(
+      pokemon,
+      1
+    );
+
+    maxStats.hp =
+      stats_for_level_1.max_hp > maxStats.hp
+        ? stats_for_level_1.max_hp
+        : maxStats.hp;
+    minStats.hp =
+      stats_for_level_1.max_hp < minStats.hp
+        ? stats_for_level_1.max_hp
+        : minStats.hp;
+
+    maxStats.attack =
+      stats_for_level_1.attack > maxStats.attack
+        ? stats_for_level_1.attack
+        : maxStats.attack;
+    minStats.attack =
+      stats_for_level_1.attack < minStats.attack
+        ? stats_for_level_1.attack
+        : minStats.attack;
+
+    maxStats.defense =
+      stats_for_level_1.defense > maxStats.defense
+        ? stats_for_level_1.defense
+        : maxStats.defense;
+    minStats.defense =
+      stats_for_level_1.defense < minStats.defense
+        ? stats_for_level_1.defense
+        : minStats.defense;
+
+    maxStats["special-attack"] =
+      stats_for_level_1.special_attack > maxStats["special-attack"]
+        ? stats_for_level_1.special_attack
+        : maxStats["special-attack"];
+    minStats["special-attack"] =
+      stats_for_level_1.special_attack < minStats["special-attack"]
+        ? stats_for_level_1.special_attack
+        : minStats["special-attack"];
+
+    maxStats["special-defense"] =
+      stats_for_level_1.special_defense > maxStats["special-defense"]
+        ? stats_for_level_1.special_defense
+        : maxStats["special-defense"];
+    minStats["special-defense"] =
+      stats_for_level_1.special_defense < minStats["special-defense"]
+        ? stats_for_level_1.special_defense
+        : minStats["special-defense"];
+
+    maxStats.speed =
+      stats_for_level_1.speed > maxStats.speed
+        ? stats_for_level_1.speed
+        : maxStats.speed;
+    minStats.speed =
+      stats_for_level_1.speed < minStats.speed
+        ? stats_for_level_1.speed
+        : minStats.speed;
+  });
+
+  // console.log(maxStats);
+  // console.log(minStats);
+
+  return { maxStats, minStats };
 }

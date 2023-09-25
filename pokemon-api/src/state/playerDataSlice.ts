@@ -9,6 +9,7 @@ interface PlayerDataState {
   money: number;
   ownedPokemon: PokemonInstance[];
   ownedItems: { item: ItemData; amount: number }[];
+  selectedPokemon: PokemonInstance | null;
 }
 
 const initialState: PlayerDataState = {
@@ -16,6 +17,7 @@ const initialState: PlayerDataState = {
   money: 100000,
   ownedPokemon: [],
   ownedItems: [],
+  selectedPokemon: null,
 };
 
 export const playerDataSlice = createSlice({
@@ -64,6 +66,9 @@ export const playerDataSlice = createSlice({
     addPokemon: (state, action: PayloadAction<PokemonInstance>) => {
       state.ownedPokemon.push(action.payload);
     },
+    setSelectedPokemon: (state, action: PayloadAction<PokemonInstance>) => {
+      state.selectedPokemon = action.payload;
+    },
   },
 });
 
@@ -74,6 +79,7 @@ export const {
   addItem,
   removeItem,
   addPokemon,
+  setSelectedPokemon,
 } = playerDataSlice.actions;
 
 export const selecPlayerData = (state: RootState) => state.playerData;

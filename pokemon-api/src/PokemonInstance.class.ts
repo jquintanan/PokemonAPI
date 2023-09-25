@@ -17,6 +17,7 @@ interface PokemonInstanceData {
 }
 
 export default class PokemonInstance implements PokemonInstanceData {
+  id: number = 0;
   data: PokemonAllData;
   isShiny: boolean;
   level: number = 1;
@@ -39,9 +40,19 @@ export default class PokemonInstance implements PokemonInstanceData {
   };
 
   constructor(data: PokemonAllData, is_shiny?: boolean, level?: number) {
+    this.id = this.gemerateID();
     this.data = data;
-    this.isShiny = is_shiny ?? Math.random() < 0.01;
+    this.isShiny = is_shiny ?? Math.random() < 0.1;
     this.setLevel(level ?? 1);
+  }
+
+  gemerateID(): number {
+    return parseInt(
+      Math.ceil(Math.random() * Date.now())
+        .toPrecision(16)
+        .toString()
+        .replace(".", "")
+    );
   }
 
   getExperienceGivenWhenDefeated(): number {
@@ -57,6 +68,7 @@ export default class PokemonInstance implements PokemonInstanceData {
   }
 
   resetHp(): PokemonInstance {
+    console.log("Resetting HP");
     this.current_hp = this.stats.max_hp;
     return this;
   }
