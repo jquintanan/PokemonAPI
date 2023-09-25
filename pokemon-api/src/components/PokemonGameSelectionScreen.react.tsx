@@ -14,6 +14,8 @@ interface PokemonGameSelectionScreenProps {
   pokemonData: PokemonAllData[];
 }
 
+const INITIAL_LEVEL_FOR_NEW_POKEMON = 5;
+
 export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProps> = ({
   pokemonData,
 }) => {
@@ -24,7 +26,11 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
   const buyPokemon = (pokemon: PokemonAllData) => {
     console.log("buying pokemon");
     //Add pokemon to player's ownedPokemon
-    const pokemon_instance = new PokemonInstance(pokemon, undefined, 50);
+    const pokemon_instance = new PokemonInstance(
+      pokemon,
+      undefined,
+      INITIAL_LEVEL_FOR_NEW_POKEMON
+    );
     dispatch(addPokemon(pokemon_instance));
 
     selectPokemon(pokemon_instance);
@@ -108,6 +114,7 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                   showLevel={true}
                   showType={true}
                   showHPBar={true}
+                  showCurrentStats={true}
                 >
                   <button
                     onClick={() => {

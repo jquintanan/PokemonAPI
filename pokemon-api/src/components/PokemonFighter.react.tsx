@@ -83,10 +83,28 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
         }
         alt="pokemon"
       />
+      {showCurrentStats && (
+        <div className="section">
+          <h4>Current Stats</h4>
+          <div style={{ marginTop: "10px" }}>
+            Attack: {pokemon_instance.stats.attack}
+            <br />
+            Defense: {pokemon_instance.stats.defense}
+            <br />
+            Sp. Attack: {pokemon_instance.stats.special_attack}
+            <br />
+            Sp. Defense: {pokemon_instance.stats.special_defense}
+            <br />
+            Speed: {pokemon_instance.stats.speed}
+            <br />
+            Exp: {pokemon_instance.exp}
+          </div>
+        </div>
+      )}
 
       {showBaseStats && (
         <div className="section">
-          <h4>Stats</h4>
+          <h4>Base Stats</h4>
           <div style={{ marginTop: "10px" }}>
             <PokemonFighterStatBar
               name={"HP"}

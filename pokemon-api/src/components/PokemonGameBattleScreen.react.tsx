@@ -5,7 +5,12 @@ import { calculateTypeMultiplier } from "./PokemonType.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
 import { useDispatch, useSelector } from "react-redux";
-import { selecPlayerData, setSelectedPokemon } from "../state/playerDataSlice";
+import {
+  selecPlayerData,
+  setSelectedPokemon,
+  increaseMoney,
+  increaseExpForPokemon,
+} from "../state/playerDataSlice";
 
 interface PokemonGameBattleScreenProps {
   pokemonData: PokemonAllData[];
@@ -117,6 +122,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             showHPBar={true}
             showLevel={true}
             showType={true}
+            showCurrentStats={true}
           />
         </div>
       </div>
@@ -132,6 +138,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             showHPBar={true}
             showLevel={true}
             showType={true}
+            showCurrentStats={true}
           />
         </div>
         <button
@@ -230,6 +237,15 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
           getMessageObject(`You defeated ${opponent.data.name}!`)
         );
         setBattleLog(new_battle_log);
+
+        //Add money to player
+        dispatch(increaseMoney(100));
+
+        //Add exp to pokemon
+        const exp_gain =
+          (opponent.data.pokemon_data.base_experience * opponent.level) / 7;
+        dispatch(increaseExpForPokemon({ pokemon: user, exp: 100 }));
+
         return;
       }
       processOpponentTurn(user, opponent, new_battle_log);
@@ -271,8 +287,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     const user_base_damage = calculateBaseDamage(
       user,
       opponent,
-      user_attack_type,
-      ALL_POKEMON_LEVEL
+      user_attack_type
     );
     const user_random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
     const user_type_multiplier = calculateTypeMultiplier(
@@ -296,7 +311,8 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
       //add an scared emoji to the text
       damage_text += " 😱";
     } else if (user_type_multiplier < 1) {
-      damage_text += " It's not very effective...";
+      damage_text +=
+        " It's not very effective...(" + user_type_multiplier + ")";
       //add an emoji to the text
       damage_text += " 😐";
     }
@@ -332,8 +348,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     const opponent_base_damage = calculateBaseDamage(
       opponent,
       user,
-      opponent_action,
-      ALL_POKEMON_LEVEL
+      opponent_action
     );
     const opponent_random_modifier = Math.random() * (1.0 - 0.85) + 0.85; // random modifier between 0.85 and 1.0
     const opponent_type_multiplier = calculateTypeMultiplier(
@@ -381,13 +396,11 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     defenderData: PokemonInstance
   ): AttackType {
     //Check if opponent attack or special attack
-    const opponent_attack = opponentData.data.pokemon_data.stats[1].base_stat;
-    const opponent_special_attack =
-      opponentData.data.pokemon_data.stats[3].base_stat;
+    const opponent_attack = opponentData.stats.attack;
+    const opponent_special_attack = opponentData.stats.special_attack;
 
-    const defender_defense = defenderData.data.pokemon_data.stats[2].base_stat;
-    const defender_special_defense =
-      defenderData.data.pokemon_data.stats[4].base_stat;
+    const defender_defense = defenderData.stats.defense;
+    const defender_special_defense = defenderData.stats.special_defense;
 
     const attackType: AttackType =
       opponent_attack / defender_defense >
@@ -401,17 +414,14 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
   function calculateBaseDamage(
     attackerData: PokemonInstance,
     defenderData: PokemonInstance,
-    attackType: AttackType,
-    attackerLevel: number
+    attackType: AttackType
   ): number {
     //calculate damage using the input parameters
-    const attacker_attack = attackerData.data.pokemon_data.stats[1].base_stat;
-    const attacker_special_attack =
-      attackerData.data.pokemon_data.stats[3].base_stat;
+    const attacker_attack = attackerData.stats.attack;
+    const attacker_special_attack = attackerData.stats.special_attack;
 
-    const defender_defense = defenderData.data.pokemon_data.stats[2].base_stat;
-    const defender_special_defense =
-      defenderData.data.pokemon_data.stats[4].base_stat;
+    const defender_defense = defenderData.stats.defense;
+    const defender_special_defense = defenderData.stats.special_defense;
 
     const attack =
       attackType === "attack" ? attacker_attack : attacker_special_attack;
@@ -421,7 +431,9 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     const move_power = attack; //for now, the move power is the same as the attack
 
     const damage = Math.floor(
-      (((2.0 * attackerLevel) / 5.0 + 2) * move_power * (attack / defense)) /
+      (((2.0 * attackerData.level) / 5.0 + 2) *
+        move_power *
+        (attack / defense)) /
         50.0 +
         2
     );

@@ -69,6 +69,17 @@ export const playerDataSlice = createSlice({
     setSelectedPokemon: (state, action: PayloadAction<PokemonInstance>) => {
       state.selectedPokemon = action.payload;
     },
+    increaseExpForPokemon: (
+      state,
+      action: PayloadAction<{ pokemon: PokemonInstance; exp: number }>
+    ) => {
+      const pokemon = state.ownedPokemon.find(
+        (p) => p.id === action.payload.pokemon.id
+      );
+      if (pokemon) {
+        pokemon.increaseExp(action.payload.exp);
+      }
+    },
   },
 });
 
@@ -80,6 +91,7 @@ export const {
   removeItem,
   addPokemon,
   setSelectedPokemon,
+  increaseExpForPokemon,
 } = playerDataSlice.actions;
 
 export const selecPlayerData = (state: RootState) => state.playerData;
