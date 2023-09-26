@@ -9,7 +9,7 @@ import {
   selecPlayerData,
   setSelectedPokemon,
   increaseMoney,
-  increaseExpForPokemon,
+  defeatedPokemon,
 } from "../state/playerDataSlice";
 
 interface PokemonGameBattleScreenProps {
@@ -37,9 +37,10 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
   console.log("Rendering PokemonGame-BattleScreen");
 
   const [battleLog, setBattleLog] = useState<BattleLogEntry[]>([]);
-  const [opponentInstance, setOpponentInstance] = useState<PokemonInstance>(
-    new PokemonInstance(pokemonData[0], false, ALL_POKEMON_LEVEL)
-  );
+  const [
+    opponentInstance,
+    setOpponentInstance,
+  ] = useState<PokemonInstance | null>();
 
   const [killStreak, setKillStreak] = useState<number>(0);
   const [shinyKillStreak, setShinyKillStreak] = useState<number>(0);
@@ -83,6 +84,10 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     return <div>You don't have any pokemon yet!</div>;
   }
 
+  if (!opponentInstance) {
+    return <div>Loading...</div>;
+  }
+
   const playerInstance: PokemonInstance = selectedPokemon;
 
   const kill_streak_counter_component = (
@@ -124,6 +129,8 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             showLevel={true}
             showExp={true}
             showType={true}
+            showEVs={true}
+            showCurrentStats={true}
           />
         </div>
       </div>
@@ -152,6 +159,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
             }
 
             if (playerInstance.current_hp <= 0) {
+              console.log("resetting hp for fainted pokemon");
               dispatch(setSelectedPokemon(playerInstance.resetHp()));
             }
 
@@ -177,6 +185,10 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
     opponent: PokemonInstance,
     user_attack_type: AttackType
   ) {
+    if (!user || !opponent) {
+      return;
+    }
+
     const new_battle_log = [...battleLog];
 
     if (playerInstance.current_hp <= 0) {
@@ -185,7 +197,7 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
       return;
     }
 
-    if (opponentInstance.current_hp <= 0) {
+    if (opponent.current_hp <= 0) {
       const messages = [
         `${opponent.data.name} is already on the ground, give them a break!`,
         `Looks like ${opponent.data.name} is already defeated. Spare them the extra pain!`,
@@ -317,12 +329,11 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
       //Add money to player
       dispatch(increaseMoney(100));
 
-      //Add exp to pokemon
-      const exp_gain = opponent.getExperienceYieldWhenDefeated();
-      console.log("defeated! exp gain: " + exp_gain);
-      dispatch(increaseExpForPokemon({ pokemon: user, exp: exp_gain }));
+      dispatch(
+        defeatedPokemon({ user_pokemon: user, enemy_pokemon: opponent })
+      );
 
-      if (opponentInstance.isShiny) {
+      if (opponent.isShiny) {
         setShinyKillStreak(shinyKillStreak + 1);
       }
       setKillStreak(killStreak + 1);

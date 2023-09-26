@@ -26,7 +26,6 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
   const [showlAllPokemon, setShowAllPokemon] = useState(false);
 
   const buyPokemon = (pokemon: PokemonAllData) => {
-    console.log("buying pokemon");
     //Add pokemon to player's ownedPokemon
     const pokemon_instance = new PokemonInstance(
       pokemon,
@@ -39,7 +38,6 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
   };
 
   const selectPokemon = (pokemon: PokemonInstance) => {
-    console.log("selecting pokemon");
     dispatch(setSelectedPokemon(pokemon));
   };
 
@@ -68,7 +66,9 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
               alt={selectedPokemon.data.pokemon_data.name}
             />
           </div>
-          <div>{selectedPokemon.data.pokemon_data.name}</div>
+          <div style={{ textTransform: "capitalize" }}>
+            {selectedPokemon.data.pokemon_data.name}
+          </div>
         </div>
       )}
     </div>
@@ -135,7 +135,6 @@ export const PokemonGameSelectionScreen: React.FC<PokemonGameSelectionScreenProp
                     >
                       <button
                         onClick={() => {
-                          console.log("selecting pokemon");
                           selectPokemon(pokemon_instance);
                         }}
                       >

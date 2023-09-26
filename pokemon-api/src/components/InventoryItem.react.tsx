@@ -25,6 +25,7 @@ export const InventoryItem: React.FC<InventoryItemProps> = ({
         alignItems: "center",
         margin: "10px",
         width: "100px",
+        textTransform: "capitalize",
       }}
       key={"item " + item.id}
     >

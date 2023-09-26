@@ -87,6 +87,20 @@ export const playerDataSlice = createSlice({
         pokemon.increaseExp(action.payload.exp);
       }
     },
+    defeatedPokemon: (
+      state,
+      action: PayloadAction<{
+        user_pokemon: PokemonInstance;
+        enemy_pokemon: PokemonInstance;
+      }>
+    ) => {
+      const pokemon = state.ownedPokemon.find(
+        (p) => p.id === action.payload.user_pokemon.id
+      );
+      if (pokemon) {
+        pokemon.defeatedPokemon(action.payload.enemy_pokemon);
+      }
+    },
   },
 });
 
@@ -100,6 +114,7 @@ export const {
   removePokemon,
   setSelectedPokemon,
   increaseExpForPokemon,
+  defeatedPokemon,
 } = playerDataSlice.actions;
 
 export const selecPlayerData = (state: RootState) => state.playerData;
