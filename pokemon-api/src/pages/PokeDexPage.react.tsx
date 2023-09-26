@@ -95,7 +95,7 @@ export const PokeDexPage: React.FC<PokeDexPageProps> = ({}) => {
             return (
               <tr id={`${pokemon.id}`}>
                 <td>{pokemon.id}</td>
-                <td>
+                <td style={{ textTransform: "capitalize" }}>
                   <Link to={`/profile/${pokemon.id}`}>{pokemon.name}</Link>
                 </td>
                 <td>{pokemon.dex_entry}</td>
