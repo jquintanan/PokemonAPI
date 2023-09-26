@@ -16,6 +16,7 @@ interface PokemonFighterProps {
   showExp?: boolean;
   showType?: boolean;
   showIVs?: boolean;
+  showEVs?: boolean;
 }
 
 type FighterMode = "selection" | "battle";
@@ -31,6 +32,7 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
   showExp = false,
   showType = false,
   showIVs = false,
+  showEVs = false,
 }) => {
   const minMaxStats = getBaseStatsRanges();
   const base_stats: PokemonStats = pokemon_instance.data.base_stats;
@@ -143,6 +145,25 @@ export const PokemonFighter: React.FC<PokemonFighterProps> = ({
             Sp. Defense: {pokemon_instance.ivs.special_defense}
             <br />
             Speed: {pokemon_instance.ivs.speed}
+          </div>
+        </div>
+      )}
+
+      {showEVs && (
+        <div className="section">
+          <h4>EVs</h4>
+          <div style={{ marginTop: "10px" }}>
+            HP: {pokemon_instance.evs.hp}
+            <br />
+            Attack: {pokemon_instance.evs.attack}
+            <br />
+            Defense: {pokemon_instance.evs.defense}
+            <br />
+            Sp. Attack: {pokemon_instance.evs.special_attack}
+            <br />
+            Sp. Defense: {pokemon_instance.evs.special_defense}
+            <br />
+            Speed: {pokemon_instance.evs.speed}
           </div>
         </div>
       )}

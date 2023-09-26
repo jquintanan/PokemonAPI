@@ -44,6 +44,7 @@ export interface PokemonData {
     stat: {
       name: string;
     };
+    effort: number;
   }[];
   moves: {
     move: {
@@ -87,6 +88,7 @@ export interface PokemonAllData {
   pokemon_data: PokemonData;
   species_data: SpeciesData;
   base_stats: PokemonStats;
+  evs: PokemonStats;
 }
 
 interface AllLoadedData {
@@ -129,6 +131,7 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
       const pokemon_data = await fetchPokemonDataURL(pokemon.url);
       const species_data = await fetchSpeciesDataURL(pokemon_data.species.url);
       const base_stats = getBaseStatsFromPokemonData(pokemon_data);
+      const evs = getEVsFromPokemonData(pokemon_data);
 
       const id: number = pokemon_data.id;
       const dex_entry =
@@ -137,8 +140,6 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
           ?.flavor_text.replace("\n", " ")
           .replace("\f", " ") ?? "";
 
-      console.log(species_data.habitat.name);
-
       return {
         id: id,
         name: pokemon.name,
@@ -146,6 +147,7 @@ export async function fetchAllData(): Promise<PokemonAllData[]> {
         pokemon_data,
         species_data,
         base_stats,
+        evs,
       };
     })
   );
@@ -370,6 +372,20 @@ function getBaseStatsFromPokemonData(pokemon_data: PokemonData): PokemonStats {
   };
 
   return base_stats;
+}
+
+function getEVsFromPokemonData(pokemon_data: PokemonData): PokemonStats {
+  const { stats } = pokemon_data;
+  const evs: PokemonStats = {
+    hp: stats[0].effort,
+    attack: stats[1].effort,
+    defense: stats[2].effort,
+    special_attack: stats[3].effort,
+    special_defense: stats[4].effort,
+    speed: stats[5].effort,
+  };
+
+  return evs;
 }
 
 interface MinMaxStats {
