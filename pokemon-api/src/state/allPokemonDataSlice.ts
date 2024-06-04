@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 
 interface AllPokemonDataState {
   allPokemonData: PokemonAllData[];

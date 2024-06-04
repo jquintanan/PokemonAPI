@@ -1,14 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { ItemData } from "../api";
+import { ItemData } from "../api/data";
 import PokemonInstance from "../PokemonInstance.class";
+import { PokemonInstanceData } from "../PokemonInstance.class";
 
-interface PlayerDataState {
+export interface PlayerDataState {
   name: string;
   money: number;
   ownedPokemon: PokemonInstance[];
   ownedItems: { item: ItemData; amount: number }[];
   selectedPokemon: PokemonInstance | null;
+
+  allPokemonInstanceData: {
+    byId: { [id: number]: PokemonInstanceData };
+    allIds: number[];
+  };
+
+  ownedPokemonIds: number[];
+  currentPokemonId: number | null;
+  currentEnemyPokemonData: PokemonInstanceData | null;
 }
 
 const initialState: PlayerDataState = {
@@ -17,6 +27,13 @@ const initialState: PlayerDataState = {
   ownedPokemon: [],
   ownedItems: [],
   selectedPokemon: null,
+  allPokemonInstanceData: {
+    byId: {},
+    allIds: [],
+  },
+  ownedPokemonIds: [],
+  currentPokemonId: null,
+  currentEnemyPokemonData: null,
 };
 
 export const playerDataSlice = createSlice({
@@ -63,18 +80,32 @@ export const playerDataSlice = createSlice({
       }
     },
     addPokemon: (state, action: PayloadAction<PokemonInstance>) => {
+      //Using non-serializable data in redux state
       state.ownedPokemon.push(action.payload);
+
+      //Using serializable data in redux state
+      state.ownedPokemonIds.push(action.payload.id);
     },
     removePokemon: (state, action: PayloadAction<PokemonInstance>) => {
+      //Using non-serializable data in redux
       state.ownedPokemon = state.ownedPokemon.filter(
         (p) => p.id !== action.payload.id
       );
 
       if (state.selectedPokemon?.id === action.payload.id)
         state.selectedPokemon = state.ownedPokemon[0] ?? null;
+
+      //Using serializable data in redux
+      state.ownedPokemonIds = state.ownedPokemonIds.filter(
+        (id) => id !== action.payload.id
+      );
     },
     setSelectedPokemon: (state, action: PayloadAction<PokemonInstance>) => {
+      //Using non-serializable data in redux
       state.selectedPokemon = action.payload;
+
+      //Using serializable data in redux
+      state.currentPokemonId = action.payload.id;
     },
     increaseExpForPokemon: (
       state,

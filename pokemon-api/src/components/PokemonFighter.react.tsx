@@ -1,5 +1,5 @@
 import React from "react";
-import { getBaseStatsRanges, PokemonStats } from "../api";
+import { getBaseStatsRanges, PokemonStats } from "../api/data";
 import { PokemonType } from "./PokemonType.react";
 import { PokemonHPBar } from "./PokemonHPBar.react";
 import PokemonInstance from "../PokemonInstance.class";

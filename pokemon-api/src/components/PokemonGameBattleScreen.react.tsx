@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { calculateTypeMultiplier } from "./PokemonType.react";
 import { log } from "../PokemonAppLogger";
@@ -480,6 +480,9 @@ export const PokemonGameBattleScreen: React.FC<PokemonGameBattleScreenProps> = (
           disabled={playerInstance.current_hp < 1}
         >
           Special Attack
+        </button>
+        <button style={{ width: "40%", maxWidth: "300px" }} disabled={true}>
+          Special Attack 2?
         </button>
       </div>
     </div>

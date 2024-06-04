@@ -4,7 +4,7 @@ import { RootState } from "../state/store";
 //import from profileInfoSlice, add item, and remove item
 import { increaseMoney, addItem, removeItem } from "../state/playerDataSlice";
 import { useDispatch } from "react-redux";
-import { ItemData, ALL_ITEMS_DATA } from "../api";
+import { ItemData, ALL_ITEMS_DATA } from "../api/data";
 
 interface MarketPageProps {}
 
@@ -57,6 +57,8 @@ export const MarketPage: React.FC<MarketPageProps> = ({}) => {
       </div>
     </div>
   );
+
+  console.log(ALL_ITEMS_DATA);
 
   const shop = (
     <div className="section">

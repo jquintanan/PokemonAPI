@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import { PokeDexPage } from "./pages/PokeDexPage.react";
 import { PokemonProfileView } from "./components/PokemonProfileView.react";
-import { PokemonAllData, fetchAllData, fetchItems } from "./api";
+import { PokemonAllData, fetchAllData, fetchItems } from "./api/data";
 import { GamePage } from "./pages/GamePage.react";
 import { AboutPage } from "./pages/AboutPage.react";
 import { log } from "./PokemonAppLogger";
@@ -18,6 +18,8 @@ import {
   setAllPokemonData,
 } from "./state/allPokemonDataSlice";
 import { setAllItemData } from "./state/allItemDataSlice";
+import { HabitatsPage } from "./pages/HabitatsPage.react";
+import { ExplorePage } from "./pages/ExplorePage.react";
 
 function App() {
   const dispatch = useDispatch();
@@ -69,7 +71,12 @@ function App() {
                 <li>
                   <Link to="/pokedex">PokeDex</Link>
                 </li>
-
+                <li>
+                  <Link to="/habitats">Habitats</Link>
+                </li>
+                <li>
+                  <Link to="/explore">Explore</Link>
+                </li>
                 <li>
                   <Link to="/about">About</Link>
                 </li>
@@ -82,6 +89,18 @@ function App() {
             path="/pokedex"
             element={
               pokemonData.length > 0 ? <PokeDexPage /> : <h1>Loading...</h1>
+            }
+          />
+          <Route
+            path="/habitats"
+            element={
+              pokemonData.length > 0 ? <HabitatsPage /> : <h1>Loading...</h1>
+            }
+          />
+          <Route
+            path="/explore"
+            element={
+              pokemonData.length > 0 ? <ExplorePage /> : <h1>Loading...</h1>
             }
           />
           <Route

@@ -1,9 +1,10 @@
-import { PokemonAllData, PokemonStats } from "./api";
+import { PokemonAllData, PokemonStats, ALL_POKEMON_ALL_DATA } from "./api/data";
 
 export interface PokemonInstanceData {
   id: number;
   data: PokemonAllData;
   isShiny: boolean;
+  isWild: boolean;
   level: number;
   exp: number;
   current_hp: number;
@@ -17,6 +18,7 @@ export default class PokemonInstance implements PokemonInstanceData {
   id: number = 0;
   data: PokemonAllData;
   isShiny: boolean;
+  isWild: boolean = true;
   level: number = 1;
   exp: number = 0;
   current_hp: number = 1;
@@ -276,5 +278,34 @@ export default class PokemonInstance implements PokemonInstanceData {
 
     //Trigger update on stats
     this.updateStats();
+  }
+
+  toPokemonInstanceData(): PokemonInstanceData {
+    return {
+      id: this.id,
+      data: this.data,
+      isShiny: this.isShiny,
+      isWild: this.isWild,
+      level: this.level,
+      exp: this.exp,
+      current_hp: this.current_hp,
+      stats: this.stats,
+      ivs: this.ivs,
+      evs: this.evs,
+      fullyTrainedAchieved: this.fullyTrainedAchieved,
+    };
+  }
+
+  static fromPokemonInstanceData(data: PokemonInstanceData): PokemonInstance {
+    const pokemon = new PokemonInstance(data.data, data.isShiny, data.level);
+    pokemon.id = data.id;
+    pokemon.isWild = data.isWild;
+    pokemon.exp = data.exp;
+    pokemon.current_hp = data.current_hp;
+    pokemon.stats = data.stats;
+    pokemon.ivs = data.ivs;
+    pokemon.evs = data.evs;
+    pokemon.fullyTrainedAchieved = data.fullyTrainedAchieved;
+    return pokemon;
   }
 }

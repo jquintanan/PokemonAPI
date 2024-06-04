@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { PokemonType } from "../components/PokemonType.react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { Link } from "react-router-dom";
 import { log } from "../PokemonAppLogger";
 import { useSelector } from "react-redux";

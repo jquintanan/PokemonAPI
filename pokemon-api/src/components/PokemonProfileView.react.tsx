@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { useState, useEffect } from "react";
 import { Pokemon } from "./Pokemon.react";
 

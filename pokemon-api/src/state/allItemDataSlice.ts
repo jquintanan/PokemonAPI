@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "./store";
-import { ItemData } from "../api";
+import { ItemData } from "../api/data";
 
 interface AllItemDataState {
   allItemData: ItemData[];

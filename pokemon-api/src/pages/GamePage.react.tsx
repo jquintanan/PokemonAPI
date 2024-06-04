@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { PokemonGameSelectionScreen } from "../components/PokemonGameSelectionScreen.react";
 import { PokemonGameBattleScreen } from "../components/PokemonGameBattleScreen.react";
 import { log } from "../PokemonAppLogger";

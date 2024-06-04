@@ -1,5 +1,5 @@
 import React from "react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { PokemonType } from "./PokemonType.react";
 
 interface PokemonProps {

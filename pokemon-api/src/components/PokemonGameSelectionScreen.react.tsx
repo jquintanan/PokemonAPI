@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PokemonAllData } from "../api";
+import { PokemonAllData } from "../api/data";
 import { PokemonFighter } from "./PokemonFighter.react";
 import { log } from "../PokemonAppLogger";
 import PokemonInstance from "../PokemonInstance.class";
